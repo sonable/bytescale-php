@@ -1,8 +1,8 @@
 {
-    "name": "git_user_id/git_repo_id",
+    "name": "sonable/bytescale-php",
     "description": "",
     "keywords": [
-        "swagger",
+        "bytescale",
         "php",
         "sdk",
         "rest",
