@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ObjectSerializer
  *
@@ -69,10 +70,12 @@ class ObjectSerializer
             foreach ($data::swaggerTypes() as $property => $swaggerType) {
                 $getter = $data::getters()[$property];
                 $value = $data->$getter();
-                if ($value !== null
+                if (
+                    $value !== null
                     && !in_array($swaggerType, ['DateTime', 'bool', 'boolean', 'byte', 'double', 'float', 'int', 'integer', 'mixed', 'number', 'object', 'string', 'void'], true)
                     && method_exists($swaggerType, 'getAllowableEnumValues')
-                    && !in_array($value, $swaggerType::getAllowableEnumValues(), true)) {
+                    && !in_array($value, $swaggerType::getAllowableEnumValues(), true)
+                ) {
                     $imploded = implode("', '", $swaggerType::getAllowableEnumValues());
                     throw new \InvalidArgumentException("Invalid value for enum '$swaggerType', must be one of: '$imploded'");
                 }
@@ -113,7 +116,8 @@ class ObjectSerializer
      */
     public static function toPathValue($value)
     {
-        return rawurlencode(self::toString($value));
+        // Split URL parts before encoding
+        return implode('/', array_map('rawurlencode', explode('/', self::toString($value))));
     }
 
     /**
@@ -273,8 +277,10 @@ class ObjectSerializer
             /** @var \Psr\Http\Message\StreamInterface $data */
 
             // determine file name
-            if (array_key_exists('Content-Disposition', $httpHeaders) &&
-                preg_match('/inline; filename=[\'"]?([^\'"\s]+)[\'"]?$/i', $httpHeaders['Content-Disposition'], $match)) {
+            if (
+                array_key_exists('Content-Disposition', $httpHeaders) &&
+                preg_match('/inline; filename=[\'"]?([^\'"\s]+)[\'"]?$/i', $httpHeaders['Content-Disposition'], $match)
+            ) {
                 $filename = Configuration::getDefaultConfiguration()->getTempFolderPath() . DIRECTORY_SEPARATOR . self::sanitizeFilename($match[1]);
             } else {
                 $filename = tempnam(Configuration::getDefaultConfiguration()->getTempFolderPath(), '');
