@@ -1,4 +1,5 @@
 <?php
+
 /**
  * FileApi
  * PHP version 5
@@ -154,7 +155,7 @@ class FileApi
                 $content = $responseBody; //stream goes to serializer
             } else {
                 $content = $responseBody->getContents();
-                if (!in_array($returnType, ['string','integer','bool'])) {
+                if (!in_array($returnType, ['string', 'integer', 'bool'])) {
                     $content = json_decode($content);
                 }
             }
@@ -164,7 +165,6 @@ class FileApi
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
-
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 200:
@@ -339,10 +339,8 @@ class FileApi
                 }
                 // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
-
             } elseif ($headers['Content-Type'] === 'application/json') {
                 $httpBody = \GuzzleHttp\json_encode($formParams);
-
             } else {
                 // for HTTP post (form)
                 $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
@@ -443,7 +441,7 @@ class FileApi
                 $content = $responseBody; //stream goes to serializer
             } else {
                 $content = $responseBody->getContents();
-                if (!in_array($returnType, ['string','integer','bool'])) {
+                if (!in_array($returnType, ['string', 'integer', 'bool'])) {
                     $content = json_decode($content);
                 }
             }
@@ -453,7 +451,6 @@ class FileApi
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
-
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 200:
@@ -636,10 +633,8 @@ class FileApi
                 }
                 // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
-
             } elseif ($headers['Content-Type'] === 'application/json') {
                 $httpBody = \GuzzleHttp\json_encode($formParams);
-
             } else {
                 // for HTTP post (form)
                 $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
@@ -735,7 +730,6 @@ class FileApi
             }
 
             return [null, $statusCode, $response->getHeaders()];
-
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 401:
@@ -889,10 +883,8 @@ class FileApi
                 }
                 // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
-
             } elseif ($headers['Content-Type'] === 'application/json') {
                 $httpBody = \GuzzleHttp\json_encode($formParams);
-
             } else {
                 // for HTTP post (form)
                 $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
@@ -993,7 +985,7 @@ class FileApi
                 $content = $responseBody; //stream goes to serializer
             } else {
                 $content = $responseBody->getContents();
-                if (!in_array($returnType, ['string','integer','bool'])) {
+                if (!in_array($returnType, ['string', 'integer', 'bool'])) {
                     $content = json_decode($content);
                 }
             }
@@ -1003,7 +995,6 @@ class FileApi
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
-
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 200:
@@ -1186,10 +1177,8 @@ class FileApi
                 }
                 // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
-
             } elseif ($headers['Content-Type'] === 'application/json') {
                 $httpBody = \GuzzleHttp\json_encode($formParams);
-
             } else {
                 // for HTTP post (form)
                 $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
@@ -1296,7 +1285,7 @@ class FileApi
                 $content = $responseBody; //stream goes to serializer
             } else {
                 $content = $responseBody->getContents();
-                if (!in_array($returnType, ['string','integer','bool'])) {
+                if (!in_array($returnType, ['string', 'integer', 'bool'])) {
                     $content = json_decode($content);
                 }
             }
@@ -1306,7 +1295,6 @@ class FileApi
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
-
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 200:
@@ -1438,7 +1426,7 @@ class FileApi
 
         // query params
         if ($cache !== null) {
-            $queryParams['cache'] = ObjectSerializer::toQueryValue($cache, null);
+            $queryParams['cache'] = $cache ? "true" : "false";
         }
         // query params
         if ($cache_ttl !== null) {
@@ -1499,10 +1487,8 @@ class FileApi
                 }
                 // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
-
             } elseif ($headers['Content-Type'] === 'application/json') {
                 $httpBody = \GuzzleHttp\json_encode($formParams);
-
             } else {
                 // for HTTP post (form)
                 $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
@@ -1603,7 +1589,7 @@ class FileApi
                 $content = $responseBody; //stream goes to serializer
             } else {
                 $content = $responseBody->getContents();
-                if (!in_array($returnType, ['string','integer','bool'])) {
+                if (!in_array($returnType, ['string', 'integer', 'bool'])) {
                     $content = json_decode($content);
                 }
             }
@@ -1613,7 +1599,6 @@ class FileApi
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
-
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 200:
@@ -1789,10 +1774,8 @@ class FileApi
                 }
                 // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
-
             } elseif ($headers['Content-Type'] === 'application/json') {
                 $httpBody = \GuzzleHttp\json_encode($formParams);
-
             } else {
                 // for HTTP post (form)
                 $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
@@ -1909,7 +1892,7 @@ class FileApi
                 $content = $responseBody; //stream goes to serializer
             } else {
                 $content = $responseBody->getContents();
-                if (!in_array($returnType, ['string','integer','bool'])) {
+                if (!in_array($returnType, ['string', 'integer', 'bool'])) {
                     $content = json_decode($content);
                 }
             }
@@ -1919,7 +1902,6 @@ class FileApi
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
-
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 200:
@@ -2157,10 +2139,8 @@ class FileApi
                 }
                 // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
-
             } elseif ($headers['Content-Type'] === 'application/json') {
                 $httpBody = \GuzzleHttp\json_encode($formParams);
-
             } else {
                 // for HTTP post (form)
                 $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
@@ -2267,7 +2247,7 @@ class FileApi
                 $content = $responseBody; //stream goes to serializer
             } else {
                 $content = $responseBody->getContents();
-                if (!in_array($returnType, ['string','integer','bool'])) {
+                if (!in_array($returnType, ['string', 'integer', 'bool'])) {
                     $content = json_decode($content);
                 }
             }
@@ -2277,7 +2257,6 @@ class FileApi
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
-
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 200:
@@ -2485,10 +2464,8 @@ class FileApi
                 }
                 // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
-
             } elseif ($headers['Content-Type'] === 'application/json') {
                 $httpBody = \GuzzleHttp\json_encode($formParams);
-
             } else {
                 // for HTTP post (form)
                 $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
