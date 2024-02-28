@@ -1,4 +1,4 @@
-# bytescale-php
+# Bytescale PHP SDK
 
 Bytescale API
 
