@@ -39,7 +39,7 @@ Then run `composer install`
 Download the files and include `autoload.php`:
 
 ```php
-    require_once('/path/to/bytescale-php/vendor/autoload.php');
+    require_once('/path/to/bytescale-php-sdk/vendor/autoload.php');
 ```
 
 ## Tests
