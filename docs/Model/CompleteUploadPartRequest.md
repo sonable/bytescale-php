@@ -1,9 +1,9 @@
 # CompleteUploadPartRequest
 
 ## Properties
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**etag** | [**\Swagger\Client\Model\ETag**](ETag.md) |  | 
+
+| Name     | Type                                           | Description | Notes |
+| -------- | ---------------------------------------------- | ----------- | ----- |
+| **etag** | [**\BytescalePHP\Client\Model\ETag**](ETag.md) |             |
 
 [[Back to Model list]](../../README.md#documentation-for-models) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to README]](../../README.md)
-

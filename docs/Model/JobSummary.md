@@ -1,18 +1,18 @@
 # JobSummary
 
 ## Properties
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**job_docs** | **string** | Link to the documentation that describes how to get a job&#x27;s status from its job ID. | 
-**job_id** | [**\Swagger\Client\Model\AccountJobId**](AccountJobId.md) |  | 
-**job_type** | [**\Swagger\Client\Model\AccountJobType**](AccountJobType.md) |  | 
-**job_url** | [**\Swagger\Client\Model\JobUrl**](JobUrl.md) |  | 
-**account_id** | [**\Swagger\Client\Model\AccountId**](AccountId.md) |  | 
-**created** | [**\Swagger\Client\Model\EpochMillis**](EpochMillis.md) |  | 
-**error** | [**\Swagger\Client\Model\JobSummaryError**](JobSummaryError.md) |  | 
-**last_updated** | [**\Swagger\Client\Model\EpochMillis**](EpochMillis.md) |  | 
-**status** | [**\Swagger\Client\Model\AccountJobStatus**](AccountJobStatus.md) |  | 
-**summary** | [**\Swagger\Client\Model\JsonObject**](JsonObject.md) |  | 
+
+| Name             | Type                                                                   | Description                                                                              | Notes |
+| ---------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ----- |
+| **job_docs**     | **string**                                                             | Link to the documentation that describes how to get a job&#x27;s status from its job ID. |
+| **job_id**       | [**\BytescalePHP\Client\Model\AccountJobId**](AccountJobId.md)         |                                                                                          |
+| **job_type**     | [**\BytescalePHP\Client\Model\AccountJobType**](AccountJobType.md)     |                                                                                          |
+| **job_url**      | [**\BytescalePHP\Client\Model\JobUrl**](JobUrl.md)                     |                                                                                          |
+| **account_id**   | [**\BytescalePHP\Client\Model\AccountId**](AccountId.md)               |                                                                                          |
+| **created**      | [**\BytescalePHP\Client\Model\EpochMillis**](EpochMillis.md)           |                                                                                          |
+| **error**        | [**\BytescalePHP\Client\Model\JobSummaryError**](JobSummaryError.md)   |                                                                                          |
+| **last_updated** | [**\BytescalePHP\Client\Model\EpochMillis**](EpochMillis.md)           |                                                                                          |
+| **status**       | [**\BytescalePHP\Client\Model\AccountJobStatus**](AccountJobStatus.md) |                                                                                          |
+| **summary**      | [**\BytescalePHP\Client\Model\JsonObject**](JsonObject.md)             |                                                                                          |
 
 [[Back to Model list]](../../README.md#documentation-for-models) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to README]](../../README.md)
-
