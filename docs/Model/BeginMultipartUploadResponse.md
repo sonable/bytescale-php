@@ -1,11 +1,11 @@
-# BeginMultipartUploadResponse
+# # BeginMultipartUploadResponse
 
 ## Properties
 
-| Name             | Type                                                                                                                 | Description | Notes |
-| ---------------- | -------------------------------------------------------------------------------------------------------------------- | ----------- | ----- |
-| **file**         | [**\BytescalePHP\Client\Model\FileDetails**](FileDetails.md)                                                         |             |
-| **upload_id**    | [**\BytescalePHP\Client\Model\UploadId**](UploadId.md)                                                               |             |
-| **upload_parts** | [**\BytescalePHP\Client\Model\BeginMultipartUploadResponseUploadParts**](BeginMultipartUploadResponseUploadParts.md) |             |
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**file** | [**\Bytescale\Model\FileDetails**](FileDetails.md) |  |
+**uploadId** | **string** | The ID for the multipart file upload. |
+**uploadParts** | [**\Bytescale\Model\BeginMultipartUploadResponseUploadParts**](BeginMultipartUploadResponseUploadParts.md) |  |
 
-[[Back to Model list]](../../README.md#documentation-for-models) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to README]](../../README.md)
+[[Back to Model list]](../../README.md#models) [[Back to API list]](../../README.md#endpoints) [[Back to README]](../../README.md)

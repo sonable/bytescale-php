@@ -1,19 +1,21 @@
 {
     "name": "sonable/bytescale-php-sdk",
-    "description": "",
+    "description": "Bytescale API",
     "keywords": [
-        "bytescale",
+        "openapitools",
+        "openapi-generator",
+        "openapi",
         "php",
         "sdk",
         "rest",
         "api"
     ],
-    "homepage": "http://swagger.io",
-    "license": "proprietary",
+    "homepage": "https://openapi-generator.tech",
+    "license": "MIT",
     "authors": [
         {
-            "name": "BytescalePHP and contributors",
-            "homepage": "https://github.com/swagger-api/swagger-codegen"
+            "name": "OpenAPI",
+            "homepage": "https://openapi-generator.tech"
         }
     ],
     "require": {
@@ -29,9 +31,9 @@
         "friendsofphp/php-cs-fixer": "^3.5"
     },
     "autoload": {
-        "psr-4": { "BytescalePHP\\Client\\" : "lib/" }
+        "psr-4": { "Bytescale\\" : "lib/" }
     },
     "autoload-dev": {
-        "psr-4": { "BytescalePHP\\Client\\" : "test/" }
+        "psr-4": { "Bytescale\\Test\\" : "test/" }
     }
 }

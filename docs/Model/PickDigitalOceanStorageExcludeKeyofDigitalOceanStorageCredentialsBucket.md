@@ -1,11 +1,11 @@
-# PickDigitalOceanStorageExcludeKeyofDigitalOceanStorageCredentialsBucket
+# # PickDigitalOceanStorageExcludeKeyofDigitalOceanStorageCredentialsBucket
 
 ## Properties
 
-| Name                  | Type                                                                       | Description | Notes |
-| --------------------- | -------------------------------------------------------------------------- | ----------- | ----- |
-| **object_key_prefix** | [**\BytescalePHP\Client\Model\S3ObjectKey**](S3ObjectKey.md)               |             |
-| **bucket_region**     | [**\BytescalePHP\Client\Model\DigitalOceanRegion**](DigitalOceanRegion.md) |             |
-| **bucket_name**       | [**\BytescalePHP\Client\Model\S3BucketName**](S3BucketName.md)             |             |
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**objectKeyPrefix** | **string** | AWS S3 Object Key. |
+**bucketRegion** | **string** | DigitalOcean Region. |
+**bucketName** | **string** | AWS S3 Bucket Name. |
 
-[[Back to Model list]](../../README.md#documentation-for-models) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to README]](../../README.md)
+[[Back to Model list]](../../README.md#models) [[Back to API list]](../../README.md#endpoints) [[Back to README]](../../README.md)

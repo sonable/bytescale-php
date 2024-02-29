@@ -1,13 +1,13 @@
-# FileSummary
+# # FileSummary
 
 ## Properties
 
-| Name              | Type                                                         | Description | Notes |
-| ----------------- | ------------------------------------------------------------ | ----------- | ----- |
-| **file_path**     | [**\BytescalePHP\Client\Model\FilePath**](FilePath.md)       |             |
-| **file_url**      | [**\BytescalePHP\Client\Model\RawFileUrl**](RawFileUrl.md)   |             |
-| **last_modified** | [**\BytescalePHP\Client\Model\EpochMillis**](EpochMillis.md) |             |
-| **size**          | [**\BytescalePHP\Client\Model\SizeInBytes**](SizeInBytes.md) |             |
-| **type**          | **string**                                                   |             |
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**filePath** | **string** | Absolute path to a file. Begins with a &#x60;/&#x60;. |
+**fileUrl** | **string** | URL for a raw file hosted on the Bytescale CDN. |
+**lastModified** | **int** | Epoch milliseconds (since midnight 1 January 1970, UTC). |
+**size** | **int** | Size in bytes. |
+**type** | **string** |  |
 
-[[Back to Model list]](../../README.md#documentation-for-models) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to README]](../../README.md)
+[[Back to Model list]](../../README.md#models) [[Back to API list]](../../README.md#endpoints) [[Back to README]](../../README.md)

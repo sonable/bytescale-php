@@ -1,0 +1,3460 @@
+components:
+  examples: {}
+  headers: {}
+  parameters: {}
+  requestBodies: {}
+  responses: {}
+  schemas:
+    ErrorResponse:
+      description: Response body for client-side and server-side errors.
+      properties:
+        error:
+          properties:
+            message:
+              type: string
+              description: Human-readable error message.
+              example: Error message.
+              minLength: 1
+            details:
+              description: Additional machine-readable details relating to the error.
+              properties: {}
+              type: object
+              additionalProperties: {}
+              example:
+                body.fileSize:
+                  message: min 0
+                  value: -1
+                body.mime:
+                  message: Not match in '[a-z0-9]+/[a-z0-9]+'
+                  value: image-jpeg
+            code:
+              type: string
+              description: Machine-readable error code.
+              example: error_code
+              minLength: 1
+              maxLength: 255
+              pattern: ^[a-z0-9_]+$
+          required:
+            - message
+            - code
+          type: object
+      required:
+        - error
+      type: object
+      additionalProperties: false
+    AccountId:
+      type: string
+      example: A623uY2
+      description: |-
+        Your account ID.
+
+        This is visible on the settings page:
+
+        https://www.bytescale.com/dashboard/settings
+      minLength: 7
+      maxLength: 7
+      pattern: ^[1-9A-HJ-NP-Za-km-z]*$
+    FileTagName:
+      type: string
+      example: example_tag
+      description: |-
+        The tags you specify here determine which rules will be executed for the upload.
+
+        You create rules in the Bytescale Dashboard, and choose which tags trigger each rule.
+
+        Rules include: max file size checks, traffic limit checks, rate limit checks, etc.
+      minLength: 1
+      maxLength: 255
+      pattern: ^[a-zA-Z0-9\.,/=_+-]*$
+    FileName:
+      type: string
+      example: image.jpg
+      description: |-
+        The file name to upload the file with.
+
+        Must not contain `/`.
+
+        Supports path variables.
+      minLength: 0
+      maxLength: 512
+      pattern: ^[^/]*$
+    FolderPath:
+      type: string
+      example: /uploads
+      description: Absolute path to a folder. Begins with a `/`. Should not end with a `/`.
+      minLength: 1
+      maxLength: 512
+      pattern: ^/.*$
+    PathPermissionScope:
+      description: |-
+        Specifies the level in the file tree, relative to the path, that these permissions apply.
+
+        - `"This"`: Permissions apply to the current path only.
+
+        - `"Children"`: Permissions apply to the children (files and folders) of this path only.
+
+        - `"Grandchildren+"`: Permissions apply to the grandchildren (files and folders) of this path and their descendants only.
+      type: string
+      nullable: false
+      enum:
+        - Children
+        - Grandchildren+
+        - This
+    TransformationUrlSlugPattern:
+      type: string
+      example: image
+      description: |-
+        Transformation URL slug.
+
+        - Use `"*"` to allow all file downloads.
+
+        - Use `"raw"` to allow raw/original file downloads.
+
+        - Use a `*` suffix to allow transformation prefixes (e.g. `"thumbnail-*"` will allow `thumbnail-sm` and `thumbnail-lg`).
+
+        - Use any other value to allow specific transformations (e.g. `"thumbnail"` will allow `thumbnail` downloads only).
+      minLength: 1
+      maxLength: 100
+      pattern: ^[a-zA-Z0-9-_.+=\x40~;%]*\*?$
+    FileDownloadGrantsArray:
+      items:
+        $ref: '#/components/schemas/TransformationUrlSlugPattern'
+      type: array
+      example:
+        - '*'
+      description: |-
+        An array of transformation URL slug patterns.
+
+        This array specifies which transformation slugs can be used when downloading files from this location.
+
+        - Use `"*"` to allow all file downloads.
+
+        - Use `"raw"` to allow raw/original file downloads.
+
+        - Use a `*` suffix to allow transformation prefixes. For example: `"thumbnail-*"` will allow `thumbnail-sm` and `thumbnail-lg`.
+
+        - Use any other value to allow specific transformations. For example: `"thumbnail"` will allow `thumbnail` downloads only.
+
+        - Use an empty array to indicate no file downloads are allowed.
+      minItems: 0
+      maxItems: 10
+    EpochMillis:
+      type: integer
+      format: int32
+      example: 1615680311115
+      description: Epoch milliseconds (since midnight 1 January 1970, UTC).
+      minimum: 0
+    FilePath:
+      type: string
+      example: /uploads/image.jpg
+      description: Absolute path to a file. Begins with a `/`.
+      minLength: 1
+      maxLength: 512
+      pattern: ^/.*$
+    HttpUrl:
+      type: string
+      example: https://example.com/foo
+      description: URL for an http(s) resource.
+      minLength: 1
+      maxLength: 255
+      pattern: ^https?:\/\/[-a-zA-Z0-9]+(?:\.[-a-zA-Z0-9]+)+(/.*)?$
+    MimeType:
+      type: string
+      example: image/jpeg
+      description: File MIME type.
+      minLength: 3
+      maxLength: 255
+      pattern: ^[a-zA-Z0-9]+/[a-zA-Z0-9+\-._]+(?:;[^=]+=[^;]+)*$
+    OriginalFileName:
+      type: string
+      example: example.jpg
+      description: The file's original name on the user's device.
+      minLength: 1
+      maxLength: 255
+      pattern: ^.+$
+    SizeInBytes:
+      type: integer
+      format: int32
+      example: 43182
+      description: Size in bytes.
+      minimum: 0
+    TransformationUrlSlug:
+      type: string
+      example: image
+      description: The name of the File Processing API (e.g. `image`, `video`, `audio`) or transformation preset (created in the Bytescale Dashboard) to use when processing the file.
+      minLength: 1
+      maxLength: 100
+      pattern: ^[a-zA-Z0-9-_+=\x40~;%][a-zA-Z0-9-_.+=\x40~;%]*$
+    FilePartCount:
+      type: integer
+      format: int32
+      example: 12
+      description: The number of parts the file will be uploaded with.
+      minimum: 1
+    UploadPartRange:
+      description: Specifies the range in the file the UploadPart represents.
+      properties:
+        inclusiveEnd:
+          type: integer
+          format: int32
+          description: |-
+            Position in the file the last byte of this part corresponds to. Value is -1 when the part is empty (i.e. for
+            uploading empty files).
+          example: 5242879
+          minimum: -1
+        inclusiveStart:
+          type: integer
+          format: int32
+          description: Position in the file the first byte of this part corresponds to.
+          example: 0
+          minimum: 0
+      required:
+        - inclusiveEnd
+        - inclusiveStart
+      type: object
+      additionalProperties: false
+    UploadPartIndex:
+      type: integer
+      format: int32
+      example: 7
+      description: |-
+        Index of an uploadable file part.
+
+        Can be used as the `uploadPartIndex` parameter in the GetUploadPart and CompleteUploadPart operations.
+      minimum: 0
+    PreSignedUploadUrl:
+      type: string
+      example: https://...long-url...x-id=PutObject
+      description: |-
+        Pre-signed upload URL for this part.
+
+        You are required to issue a `PUT` to this URL, with the file's bytes as the request body (limited to the range indicated by this upload part).
+
+        The `PUT` request will return an `etag` response header, which must be provided in a subsequent CompleteUploadPart request.
+      minLength: 10
+    ETag:
+      type: string
+      example: 33a64df551425fcc55e4d42a148795d9f25f89d4
+      description: File ETag.
+      minLength: 1
+      maxLength: 255
+      pattern: ^\S*$
+    CompleteUploadPartRequest:
+      description: Request body for CompleteUploadPart.
+      properties:
+        etag:
+          $ref: '#/components/schemas/ETag'
+          description: The value of the ```etag``` HTTP response header received from the `PUT` request that uploaded this part of the file.
+      required:
+        - etag
+      type: object
+      additionalProperties: false
+    UploadPartList:
+      description: Identifies the UploadPart indexes that still need uploading for an active multipart file upload.
+      properties:
+        remainingUploadParts:
+          items:
+            $ref: '#/components/schemas/UploadPartIndex'
+          type: array
+          description: |-
+            Indexes of the remaining parts to upload.
+
+            These indexes can be used as the `uploadPartIndex` parameter in the GetUploadPart and CompleteUploadPart endpoints.
+          example:
+            - 3
+            - 4
+            - 6
+      required:
+        - remainingUploadParts
+      type: object
+      additionalProperties: false
+    Base64:
+      type: string
+      example: aGVsbG8=
+      description: Base64-encoded string.
+      pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+    JsonObject:
+      description: An arbitrary JSON object.
+      properties: {}
+      type: object
+      additionalProperties: {}
+    FileDownloadGrants:
+      description: Permissions relating to the downloading of files at this path.
+      properties:
+        downloadFile:
+          $ref: '#/components/schemas/FileDownloadGrantsArray'
+      required:
+        - downloadFile
+      type: object
+      additionalProperties: false
+    PublicPermissionsGrantsFiles:
+      $ref: '#/components/schemas/FileDownloadGrants'
+      description: |-
+        Permissions applied to anonymous users who attempt to download files from a folder.
+
+        The `downloadFile` field declares which transformations, if any, the folder's files can be downloaded though.
+
+        Each folder can declare these permissions via its FolderSettings object.
+    PublicPermissionsGrants:
+      description: |-
+        Permissions applied to anonymous users who attempt to download files from a folder.
+
+        Each folder can declare these permissions via its FolderSettings object.
+      properties:
+        file:
+          $ref: '#/components/schemas/PublicPermissionsGrantsFiles'
+      required:
+        - file
+      type: object
+      additionalProperties: false
+    PublicPermissions:
+      description: |-
+        Permissions applied to anonymous users who attempt to download files from a folder.
+
+        Each folder can declare these permissions via its FolderSettings object.
+      properties:
+        permissions:
+          $ref: '#/components/schemas/PublicPermissionsGrants'
+          description: Permissions applied to all files that match the `scope`.
+        scope:
+          $ref: '#/components/schemas/PathPermissionScope'
+      required:
+        - permissions
+        - scope
+      type: object
+      additionalProperties: false
+    WithFolderPath_PublicPermissions-Array_:
+      properties:
+        folderPath:
+          $ref: '#/components/schemas/FolderPath'
+        value:
+          items:
+            $ref: '#/components/schemas/PublicPermissions'
+          type: array
+      required:
+        - folderPath
+        - value
+      type: object
+      additionalProperties: false
+    PublicPermissionsInherited:
+      $ref: '#/components/schemas/WithFolderPath_PublicPermissions-Array_'
+      description: |-
+        The public permissions inherited by the current path.
+
+        The `folderPath` indicates which folder the permissions were inherited from.
+    InternalStorageV1:
+      description: |-
+        Storage layer used for all files uploaded via the Bytescale API V1 (legacy version).
+
+        This is a read/write storage layer.
+      properties:
+        type:
+          type: string
+          enum:
+            - InternalStorageV1
+          nullable: false
+          description: The type of this storage layer.
+      required:
+        - type
+      type: object
+      additionalProperties: false
+    InternalStorageV2:
+      description: |-
+        Default storage layer used for files uploaded via the Bytescale API V2 (latest version).
+
+        This is a read/write storage layer.
+      properties:
+        mount:
+          $ref: '#/components/schemas/FolderPath'
+          description: |-
+            In undefined, mounts the current folder path, else mounts the specified folder path.
+
+            *Advanced feature:* this field is intended to be used to restore access to files that have been uploaded to Bytescale's built-in storage, but are now shadowed due to the containing folder now using external storage.
+        type:
+          type: string
+          enum:
+            - InternalStorageV2
+          nullable: false
+          description: The type of this storage layer.
+      required:
+        - type
+      type: object
+      additionalProperties: false
+    WebStorage:
+      description: |-
+        Storage layer used for serving files from external HTTP origins.
+
+        This is a read-only storage layer.
+      properties:
+        baseUrl:
+          $ref: '#/components/schemas/HttpUrl'
+          description: |-
+            Base URL to proxy requests to. Should contain a trailing `/`.
+
+            If `baseUrl` is undefined: then this folder will behave as an open reverse proxy.
+
+            *Example 1:* if the `baseUrl` is undefined and the folder you're configuring the storage layer on is:
+
+            `https://upcdn.io/abc1234/raw/demo`
+
+            Then you can issue requests such as:
+
+            `https://upcdn.io/abc1234/raw/demo/https://images.unsplash.com/example.jpg`
+
+            *Example 2:* if the `baseUrl` is:
+
+            `https://images.unsplash.com/`
+
+            And the folder you're configuring the storage layer on is:
+
+            `https://upcdn.io/abc1234/raw/demo`
+
+            Then you can issue requests such as:
+
+            `https://upcdn.io/abc1234/raw/demo/test/example.jpg`
+
+            Which will be routed to the URL:
+
+            `https://images.unsplash.com/test/example.jpg`
+          example: https://images.unsplash.com/
+        type:
+          type: string
+          enum:
+            - Web
+          nullable: false
+          description: The type of this storage layer.
+      required:
+        - type
+      type: object
+      additionalProperties: false
+    S3BucketName:
+      type: string
+      example: my-bucket
+      description: AWS S3 Bucket Name.
+      minLength: 1
+      maxLength: 61
+      pattern: (?!(^xn--|-s3alias$))^[a-z0-9][a-z0-9-.]{1,61}[a-z0-9]$
+    AwsRegion:
+      type: string
+      enum:
+        - us-east-2
+        - us-east-1
+        - us-west-1
+        - us-west-2
+        - af-south-1
+        - ap-east-1
+        - ap-south-2
+        - ap-southeast-3
+        - ap-southeast-4
+        - ap-south-1
+        - ap-northeast-3
+        - ap-northeast-2
+        - ap-southeast-1
+        - ap-southeast-2
+        - ap-northeast-1
+        - ca-central-1
+        - ca-west-1
+        - eu-central-1
+        - eu-west-1
+        - eu-west-2
+        - eu-south-1
+        - eu-west-3
+        - eu-south-2
+        - eu-north-1
+        - eu-central-2
+        - il-central-1
+        - me-south-1
+        - me-central-1
+        - sa-east-1
+      example: us-east-1
+      description: AWS Region.
+      minLength: 1
+      maxLength: 20
+      pattern: ^[a-z0-9-]*$
+    S3ObjectKey:
+      type: string
+      example: an/example/key
+      description: AWS S3 Object Key.
+      minLength: 0
+      maxLength: 1024
+      pattern: ^\S*$
+    Pick_S3Storage.Exclude_keyofS3Storage.credentials__:
+      properties:
+        type:
+          type: string
+          enum:
+            - S3
+          nullable: false
+          description: The type of this storage layer.
+        bucket:
+          properties:
+            objectKeyPrefix:
+              $ref: '#/components/schemas/S3ObjectKey'
+            bucketRegion:
+              $ref: '#/components/schemas/AwsRegion'
+            bucketName:
+              $ref: '#/components/schemas/S3BucketName'
+          required:
+            - objectKeyPrefix
+            - bucketRegion
+            - bucketName
+          type: object
+        useAbsolutePaths:
+          type: boolean
+          description: |-
+            If `true` then writes S3 objects with full `filePath` as key, prefixed with the `objectKeyPrefix`.
+
+            If `false` then writes S3 objects using a relative `filePath` in relation to folder's path, prefixed with the `objectKeyPrefix`.
+        useTransferAcceleration:
+          type: boolean
+          description: |-
+            Enables S3 transfer acceleration, providing improved file upload speeds for larger files.
+
+            Note: this setting must also be enabled on the S3 bucket.
+      required:
+        - type
+        - bucket
+        - useAbsolutePaths
+        - useTransferAcceleration
+      type: object
+      description: From T, pick a set of properties whose keys are in the union K
+    Omit_S3Storage.credentials_:
+      $ref: '#/components/schemas/Pick_S3Storage.Exclude_keyofS3Storage.credentials__'
+      description: Construct a type with the properties of T except for those in type K.
+    S3StorageWithoutCredentials:
+      $ref: '#/components/schemas/Omit_S3Storage.credentials_'
+      description: The same data structure as S3Storage, but with all AWS credentials removed.
+    DigitalOceanRegion:
+      type: string
+      example: nyc3
+      description: DigitalOcean Region.
+      minLength: 4
+      maxLength: 4
+      pattern: ^[a-z]{3}\d$
+    Pick_DigitalOceanStorage.Exclude_keyofDigitalOceanStorage.credentials__:
+      properties:
+        type:
+          type: string
+          enum:
+            - DigitalOceanSpace
+          nullable: false
+          description: The type of this storage layer.
+        bucket:
+          properties:
+            objectKeyPrefix:
+              $ref: '#/components/schemas/S3ObjectKey'
+            bucketRegion:
+              $ref: '#/components/schemas/DigitalOceanRegion'
+            bucketName:
+              $ref: '#/components/schemas/S3BucketName'
+          required:
+            - objectKeyPrefix
+            - bucketRegion
+            - bucketName
+          type: object
+        useAbsolutePaths:
+          type: boolean
+          description: |-
+            If `true` then writes S3 objects with full `filePath` as key, prefixed with the `objectKeyPrefix`.
+
+            If `false` then writes S3 objects using a relative `filePath` in relation to folder's path, prefixed with the `objectKeyPrefix`.
+      required:
+        - type
+        - bucket
+        - useAbsolutePaths
+      type: object
+      description: From T, pick a set of properties whose keys are in the union K
+    Omit_DigitalOceanStorage.credentials_:
+      $ref: '#/components/schemas/Pick_DigitalOceanStorage.Exclude_keyofDigitalOceanStorage.credentials__'
+      description: Construct a type with the properties of T except for those in type K.
+    DigitalOceanStorageWithoutCredentials:
+      $ref: '#/components/schemas/Omit_DigitalOceanStorage.credentials_'
+      description: The same data structure as DigitalOceanStorage, but with all DigitalOcean credentials removed.
+    CloudflareAccountId:
+      type: string
+      example: 4137fa2e8211774677c5b708463dcb1a
+      description: Cloudflare Account ID.
+      minLength: 1
+      maxLength: 64
+      pattern: ^\S*$
+    Pick_R2Storage.Exclude_keyofR2Storage.credentials__:
+      properties:
+        type:
+          type: string
+          enum:
+            - R2
+          nullable: false
+          description: The type of this storage layer.
+        bucket:
+          properties:
+            objectKeyPrefix:
+              $ref: '#/components/schemas/S3ObjectKey'
+            bucketName:
+              $ref: '#/components/schemas/S3BucketName'
+          required:
+            - objectKeyPrefix
+            - bucketName
+          type: object
+        useAbsolutePaths:
+          type: boolean
+          description: |-
+            If `true` then writes Google Storage objects with full `filePath` as key, prefixed with the `objectKeyPrefix`.
+
+            If `false` then writes Google Storage objects using a relative `filePath` in relation to folder's path, prefixed with the `objectKeyPrefix`.
+        cloudflareAccountId:
+          $ref: '#/components/schemas/CloudflareAccountId'
+      required:
+        - type
+        - bucket
+        - useAbsolutePaths
+        - cloudflareAccountId
+      type: object
+      description: From T, pick a set of properties whose keys are in the union K
+    Omit_R2Storage.credentials_:
+      $ref: '#/components/schemas/Pick_R2Storage.Exclude_keyofR2Storage.credentials__'
+      description: Construct a type with the properties of T except for those in type K.
+    R2StorageWithoutCredentials:
+      $ref: '#/components/schemas/Omit_R2Storage.credentials_'
+      description: The same data structure as R2Storage, but with all Cloudflare credentials removed.
+    GoogleBucketName:
+      type: string
+      example: my-bucket
+      description: Google Storage Bucket Name.
+      minLength: 1
+      maxLength: 61
+      pattern: ^[a-z0-9][a-z0-9-_.]{1,61}[a-z0-9]$
+    Pick_GoogleStorage.Exclude_keyofGoogleStorage.credentials__:
+      properties:
+        type:
+          type: string
+          enum:
+            - GoogleStorage
+          nullable: false
+          description: The type of this storage layer.
+        bucket:
+          properties:
+            objectKeyPrefix:
+              $ref: '#/components/schemas/S3ObjectKey'
+            bucketName:
+              $ref: '#/components/schemas/GoogleBucketName'
+          required:
+            - objectKeyPrefix
+            - bucketName
+          type: object
+        useAbsolutePaths:
+          type: boolean
+          description: |-
+            If `true` then writes Google Storage objects with full `filePath` as key, prefixed with the `objectKeyPrefix`.
+
+            If `false` then writes Google Storage objects using a relative `filePath` in relation to folder's path, prefixed with the `objectKeyPrefix`.
+      required:
+        - type
+        - bucket
+        - useAbsolutePaths
+      type: object
+      description: From T, pick a set of properties whose keys are in the union K
+    Omit_GoogleStorage.credentials_:
+      $ref: '#/components/schemas/Pick_GoogleStorage.Exclude_keyofGoogleStorage.credentials__'
+      description: Construct a type with the properties of T except for those in type K.
+    GoogleStorageWithoutCredentials:
+      $ref: '#/components/schemas/Omit_GoogleStorage.credentials_'
+      description: The same data structure as GoogleStorage, but with all Google credentials removed.
+    StorageLayerSummary:
+      oneOf:
+        - $ref: '#/components/schemas/InternalStorageV1'
+        - $ref: '#/components/schemas/InternalStorageV2'
+        - $ref: '#/components/schemas/WebStorage'
+        - $ref: '#/components/schemas/S3StorageWithoutCredentials'
+        - $ref: '#/components/schemas/DigitalOceanStorageWithoutCredentials'
+        - $ref: '#/components/schemas/R2StorageWithoutCredentials'
+        - $ref: '#/components/schemas/GoogleStorageWithoutCredentials'
+      description: |-
+        Storage layer summary information, describing an existing folder's storage layer.
+
+        This data type does not contain credentials.
+    WithFolderPath_StorageLayerSummary_:
+      properties:
+        folderPath:
+          $ref: '#/components/schemas/FolderPath'
+        value:
+          $ref: '#/components/schemas/StorageLayerSummary'
+      required:
+        - folderPath
+        - value
+      type: object
+      additionalProperties: false
+    StorageLayerInherited:
+      $ref: '#/components/schemas/WithFolderPath_StorageLayerSummary_'
+      description: |-
+        The storage layer inherited by the current path.
+
+        The `folderPath` indicates which folder the storage layer was inherited from.
+    FolderSettingsInherited:
+      description: |-
+        The FolderSettings inherited by the current path.
+
+        If the folder defines its own `settings`, then those will take effect instead of these inherited settings.
+
+        Each inherited setting contains a `folderPath` field to indicate which folder the setting was inherited from.
+
+        Note: if the requester has insufficient privileges to read a setting, that setting's value will be undefined.
+      properties:
+        publicPermissions:
+          $ref: '#/components/schemas/PublicPermissionsInherited'
+        storageLayer:
+          $ref: '#/components/schemas/StorageLayerInherited'
+      type: object
+      additionalProperties: false
+    FolderDescription:
+      type: string
+      example: This is an example folder description.
+      description: Folder description.
+      minLength: 1
+      maxLength: 100
+      pattern: ^\S(.*?\S)?$
+    FolderSettings_StorageLayerSummary_:
+      properties:
+        description:
+          $ref: '#/components/schemas/FolderDescription'
+        publicPermissions:
+          items:
+            $ref: '#/components/schemas/PublicPermissions'
+          type: array
+        storageLayer:
+          $ref: '#/components/schemas/StorageLayerSummary'
+          example:
+            type: InternalStorageV2
+      type: object
+      additionalProperties: false
+    FolderSettings:
+      $ref: '#/components/schemas/FolderSettings_StorageLayerSummary_'
+      description: |-
+        The folder's settings, including its description, public download permissions, and storage layer.
+
+        Any credentials originally saved in the folder's settings — such as AWS credentials for custom S3 buckets — are omitted by this type.
+    FolderDetails:
+      properties:
+        folderPath:
+          $ref: '#/components/schemas/FolderPath'
+          description: This folder's path. Always begins with a `/`.
+        settings:
+          $ref: '#/components/schemas/FolderSettings'
+        type:
+          type: string
+          enum:
+            - Folder
+          nullable: false
+          description: Indicates this item is a folder (as opposed to a file).
+        virtual:
+          type: boolean
+          description: |-
+            If `true` then the folder was created using the PutFolder operation.
+
+            If `false` then the folder was created automatically as the result of a file upload operation, and will disappear if/when the folder later becomes empty.
+        settingsInherited:
+          $ref: '#/components/schemas/FolderSettingsInherited'
+          description: |-
+            The FolderSettings inheritable from the folder's ancestors.
+
+            If both the `settings` field and the `settingsInherited` field define the same setting (e.g. the `storageLayer` setting) then the value from the `settings` field is used for the current folder and its descendants.
+      required:
+        - folderPath
+        - settings
+        - type
+        - virtual
+        - settingsInherited
+      type: object
+      additionalProperties: false
+    UnspecifiedFieldValue:
+      description: This data type specifies no update is to be performed.
+      properties:
+        set:
+          type: boolean
+          enum:
+            - false
+          nullable: false
+          description: This field is always `false`. Indicates the property *will not* be updated as part of the request.
+      required:
+        - set
+      type: object
+      additionalProperties: false
+    SpecifiedFieldValueEmptiable_FolderDescription_:
+      description: This data type specifies the field must be updated.
+      properties:
+        set:
+          type: boolean
+          enum:
+            - true
+          nullable: false
+          description: This field is always `true`. Indicates the property *will* be updated as part of the request, and the property's new value will be ```value```.
+        value:
+          $ref: '#/components/schemas/FolderDescription'
+          description: The value to set into the field.
+      required:
+        - set
+      type: object
+      additionalProperties: false
+    UpdatableFieldEmptiable_FolderDescription_:
+      oneOf:
+        - $ref: '#/components/schemas/UnspecifiedFieldValue'
+        - $ref: '#/components/schemas/SpecifiedFieldValueEmptiable_FolderDescription_'
+    PatchFolderDescription:
+      $ref: '#/components/schemas/UpdatableFieldEmptiable_FolderDescription_'
+      description: Specifies the folder description to use when creating or updating a folder.
+    SpecifiedFieldValueEmptiable_PublicPermissions-Array_:
+      description: This data type specifies the field must be updated.
+      properties:
+        set:
+          type: boolean
+          enum:
+            - true
+          nullable: false
+          description: This field is always `true`. Indicates the property *will* be updated as part of the request, and the property's new value will be ```value```.
+        value:
+          items:
+            $ref: '#/components/schemas/PublicPermissions'
+          type: array
+          description: The value to set into the field.
+      required:
+        - set
+      type: object
+      additionalProperties: false
+    UpdatableFieldEmptiable_PublicPermissions-Array_:
+      oneOf:
+        - $ref: '#/components/schemas/UnspecifiedFieldValue'
+        - $ref: '#/components/schemas/SpecifiedFieldValueEmptiable_PublicPermissions-Array_'
+    PatchFolderPublicPermissions:
+      $ref: '#/components/schemas/UpdatableFieldEmptiable_PublicPermissions-Array_'
+      description: Specifies the public permissions to use when creating or updating a folder.
+    AwsAccessKey:
+      type: string
+      example: AKIAIOSFODNN7EXAMPLE
+      description: AWS Access Key.
+      minLength: 16
+      maxLength: 128
+      pattern: ^\S*$
+    AwsSecretKey:
+      type: string
+      example: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+      description: AWS Secret Access Key.
+      minLength: 30
+      maxLength: 128
+      pattern: ^\S*$
+    S3Storage:
+      description: |-
+        Storage layer used for storing files in custom S3 buckets, as opposed to Bytescale's built-in storage.
+
+        This is a read/write storage layer.
+      properties:
+        bucket:
+          properties:
+            objectKeyPrefix:
+              $ref: '#/components/schemas/S3ObjectKey'
+            bucketRegion:
+              $ref: '#/components/schemas/AwsRegion'
+            bucketName:
+              $ref: '#/components/schemas/S3BucketName'
+          required:
+            - objectKeyPrefix
+            - bucketRegion
+            - bucketName
+          type: object
+        credentials:
+          properties:
+            awsSecretKey:
+              $ref: '#/components/schemas/AwsSecretKey'
+            awsAccessKey:
+              $ref: '#/components/schemas/AwsAccessKey'
+          required:
+            - awsSecretKey
+            - awsAccessKey
+          type: object
+        type:
+          type: string
+          enum:
+            - S3
+          nullable: false
+          description: The type of this storage layer.
+        useAbsolutePaths:
+          type: boolean
+          description: |-
+            If `true` then writes S3 objects with full `filePath` as key, prefixed with the `objectKeyPrefix`.
+
+            If `false` then writes S3 objects using a relative `filePath` in relation to folder's path, prefixed with the `objectKeyPrefix`.
+        useTransferAcceleration:
+          type: boolean
+          description: |-
+            Enables S3 transfer acceleration, providing improved file upload speeds for larger files.
+
+            Note: this setting must also be enabled on the S3 bucket.
+      required:
+        - bucket
+        - credentials
+        - type
+        - useAbsolutePaths
+        - useTransferAcceleration
+      type: object
+      additionalProperties: false
+    DigitalOceanStorage:
+      description: |-
+        Storage layer used for storing files in a DigitalOcean Space, as opposed to Bytescale's built-in storage.
+
+        This is a read/write storage layer.
+      properties:
+        bucket:
+          properties:
+            objectKeyPrefix:
+              $ref: '#/components/schemas/S3ObjectKey'
+            bucketRegion:
+              $ref: '#/components/schemas/DigitalOceanRegion'
+            bucketName:
+              $ref: '#/components/schemas/S3BucketName'
+          required:
+            - objectKeyPrefix
+            - bucketRegion
+            - bucketName
+          type: object
+        credentials:
+          properties:
+            spacesSecretKey:
+              $ref: '#/components/schemas/AwsSecretKey'
+            spacesAccessKey:
+              $ref: '#/components/schemas/AwsAccessKey'
+          required:
+            - spacesSecretKey
+            - spacesAccessKey
+          type: object
+        type:
+          type: string
+          enum:
+            - DigitalOceanSpace
+          nullable: false
+          description: The type of this storage layer.
+        useAbsolutePaths:
+          type: boolean
+          description: |-
+            If `true` then writes S3 objects with full `filePath` as key, prefixed with the `objectKeyPrefix`.
+
+            If `false` then writes S3 objects using a relative `filePath` in relation to folder's path, prefixed with the `objectKeyPrefix`.
+      required:
+        - bucket
+        - credentials
+        - type
+        - useAbsolutePaths
+      type: object
+      additionalProperties: false
+    R2Storage:
+      description: |-
+        Storage layer used for storing files in Cloudflare R2, as opposed to Bytescale's built-in storage.
+
+        This is a read/write storage layer.
+      properties:
+        bucket:
+          properties:
+            objectKeyPrefix:
+              $ref: '#/components/schemas/S3ObjectKey'
+            bucketName:
+              $ref: '#/components/schemas/S3BucketName'
+          required:
+            - objectKeyPrefix
+            - bucketName
+          type: object
+        cloudflareAccountId:
+          $ref: '#/components/schemas/CloudflareAccountId'
+        credentials:
+          properties:
+            r2SecretKey:
+              $ref: '#/components/schemas/AwsSecretKey'
+            r2AccessKey:
+              $ref: '#/components/schemas/AwsAccessKey'
+          required:
+            - r2SecretKey
+            - r2AccessKey
+          type: object
+        type:
+          type: string
+          enum:
+            - R2
+          nullable: false
+          description: The type of this storage layer.
+        useAbsolutePaths:
+          type: boolean
+          description: |-
+            If `true` then writes Google Storage objects with full `filePath` as key, prefixed with the `objectKeyPrefix`.
+
+            If `false` then writes Google Storage objects using a relative `filePath` in relation to folder's path, prefixed with the `objectKeyPrefix`.
+      required:
+        - bucket
+        - cloudflareAccountId
+        - credentials
+        - type
+        - useAbsolutePaths
+      type: object
+      additionalProperties: false
+    GoogleStorage:
+      description: |-
+        Storage layer used for storing files in Google Storage, as opposed to Bytescale's built-in storage.
+
+        This is a read/write storage layer.
+      properties:
+        bucket:
+          properties:
+            objectKeyPrefix:
+              $ref: '#/components/schemas/S3ObjectKey'
+            bucketName:
+              $ref: '#/components/schemas/GoogleBucketName'
+          required:
+            - objectKeyPrefix
+            - bucketName
+          type: object
+        credentials:
+          properties:
+            googleSecretKey:
+              $ref: '#/components/schemas/AwsSecretKey'
+            googleAccessKey:
+              $ref: '#/components/schemas/AwsAccessKey'
+          required:
+            - googleSecretKey
+            - googleAccessKey
+          type: object
+        type:
+          type: string
+          enum:
+            - GoogleStorage
+          nullable: false
+          description: The type of this storage layer.
+        useAbsolutePaths:
+          type: boolean
+          description: |-
+            If `true` then writes Google Storage objects with full `filePath` as key, prefixed with the `objectKeyPrefix`.
+
+            If `false` then writes Google Storage objects using a relative `filePath` in relation to folder's path, prefixed with the `objectKeyPrefix`.
+      required:
+        - bucket
+        - credentials
+        - type
+        - useAbsolutePaths
+      type: object
+      additionalProperties: false
+    StorageLayerUpdate:
+      oneOf:
+        - $ref: '#/components/schemas/InternalStorageV2'
+        - $ref: '#/components/schemas/WebStorage'
+        - $ref: '#/components/schemas/S3Storage'
+        - $ref: '#/components/schemas/DigitalOceanStorage'
+        - $ref: '#/components/schemas/R2Storage'
+        - $ref: '#/components/schemas/GoogleStorage'
+      description: |-
+        Data type used to update or create a folder's storage layer.
+
+        This data type may contain credentials.
+    SpecifiedFieldValueEmptiable_StorageLayerUpdate_:
+      description: This data type specifies the field must be updated.
+      properties:
+        set:
+          type: boolean
+          enum:
+            - true
+          nullable: false
+          description: This field is always `true`. Indicates the property *will* be updated as part of the request, and the property's new value will be ```value```.
+        value:
+          $ref: '#/components/schemas/StorageLayerUpdate'
+          description: The value to set into the field.
+      required:
+        - set
+      type: object
+      additionalProperties: false
+    UpdatableFieldEmptiable_StorageLayerUpdate_:
+      oneOf:
+        - $ref: '#/components/schemas/UnspecifiedFieldValue'
+        - $ref: '#/components/schemas/SpecifiedFieldValueEmptiable_StorageLayerUpdate_'
+    PatchFolderStorageLayer:
+      $ref: '#/components/schemas/UpdatableFieldEmptiable_StorageLayerUpdate_'
+      description: Specifies the storage layer to use when creating or updating a folder.
+    PatchFolderSettings:
+      description: Specifies the folder settings to use when creating or updating a folder.
+      properties:
+        description:
+          $ref: '#/components/schemas/PatchFolderDescription'
+        publicPermissions:
+          $ref: '#/components/schemas/PatchFolderPublicPermissions'
+        storageLayer:
+          $ref: '#/components/schemas/PatchFolderStorageLayer'
+      type: object
+      additionalProperties: false
+    PutFolderRequest:
+      description: Request body for PutFolder.
+      properties:
+        allowUnnamedFolder:
+          type: boolean
+          description: |-
+            You must specify `true` if the `folderPath` ends with a `/`.
+
+            This prevents the accidental creation of folders that produce file paths with double forward-slashes in them.
+
+            Default: false
+          example: false
+        folderPath:
+          $ref: '#/components/schemas/FolderPath'
+        folderSettings:
+          $ref: '#/components/schemas/PatchFolderSettings'
+      required:
+        - folderPath
+      type: object
+      additionalProperties: false
+    FolderSummary:
+      description: Summary information about a folder (a subset of the FolderDetails type).
+      properties:
+        folderPath:
+          $ref: '#/components/schemas/FolderPath'
+          description: This folder's path. Always begins with a `/`.
+        settings:
+          $ref: '#/components/schemas/FolderSettings'
+        type:
+          type: string
+          enum:
+            - Folder
+          nullable: false
+          description: Indicates this item is a folder (as opposed to a file).
+        virtual:
+          type: boolean
+          description: |-
+            If `true` then the folder was created using the PutFolder operation.
+
+            If `false` then the folder was created automatically as the result of a file upload operation, and will disappear if/when the folder later becomes empty.
+      required:
+        - folderPath
+        - settings
+        - type
+        - virtual
+      type: object
+      additionalProperties: false
+    RawFileUrl:
+      type: string
+      example: https://upcdn.io/A623uY2/raw/uploads/image.jpg
+      description: URL for a raw file hosted on the Bytescale CDN.
+      minLength: 1
+      maxLength: 255
+      pattern: ^https?:\/\/[-a-zA-Z0-9]+(?:\.[-a-zA-Z0-9]+)+(/.*)?$
+    FileSummary:
+      description: Summary information about a file (a subset of the FileDetails type).
+      properties:
+        filePath:
+          $ref: '#/components/schemas/FilePath'
+          description: |-
+            The file's path.
+
+            *We recommend you save this value to your database* (instead of the file's URL).
+
+            This value always begins with a `/`.
+        fileUrl:
+          $ref: '#/components/schemas/RawFileUrl'
+          description: The file's raw URL (i.e. with no file transformations applied).
+        lastModified:
+          $ref: '#/components/schemas/EpochMillis'
+          description: Time the file was uploaded or last overwritten. Epoch milliseconds (since midnight 1 January 1970, UTC).
+        size:
+          $ref: '#/components/schemas/SizeInBytes'
+          description: The size of the file in bytes.
+        type:
+          type: string
+          enum:
+            - File
+          nullable: false
+      required:
+        - filePath
+        - fileUrl
+        - lastModified
+        - size
+        - type
+      type: object
+      additionalProperties: false
+    ObjectSummary:
+      oneOf:
+        - $ref: '#/components/schemas/FolderSummary'
+        - $ref: '#/components/schemas/FileSummary'
+      description: Summary information about a file or folder.
+    ListFolderCursor:
+      $ref: '#/components/schemas/Base64'
+      description: |-
+        Pagination cursor. This is used to fetch subsequent pages of results from large folders.
+
+        To fetch the next page of results, you must set this to the value of the `cursor` field from the previous ListFolderResponse.
+
+        Pagination is complete when ListFolderResponse contains `isPaginationComplete=true`.
+    IncludeFiles:
+      type: boolean
+      example: true
+      description: |-
+        If `true` then files will be included in the result.
+
+        Default: true
+    ListFolderItemLimit:
+      type: integer
+      format: int32
+      example: 50
+      description: |-
+        The maximum number of items to return.
+
+        The response might contain fewer items but will never contain more.
+
+        This limit is applied on the unfiltered result, which means the response may contain fewer items than the limit even when there are more items to return if you are filtering the result (via the `include*` flags).
+      minimum: 1
+      maximum: 1000
+    FileOrFolderPath:
+      type: string
+      example: /uploads/file.jpg
+      description: Absolute path to a file or folder. Begins with a `/`.
+      minLength: 1
+      maxLength: 512
+      pattern: ^/.*$
+    ListFolderResponse:
+      description: Response body for ListFolderDescendants.
+      properties:
+        cursor:
+          $ref: '#/components/schemas/FileOrFolderPath'
+          description: Cursor that must be provided to the next request (to continue reading the next page of results).
+        folder:
+          $ref: '#/components/schemas/FolderSummary'
+          description: Summary information about the requested folder.
+        isPaginationComplete:
+          type: boolean
+          description: If `true` then paging has completed.
+        items:
+          items:
+            $ref: '#/components/schemas/ObjectSummary'
+          type: array
+          description: Summary information about each of the folder's descendants (files and folders).
+      required:
+        - cursor
+        - folder
+        - isPaginationComplete
+        - items
+      type: object
+      additionalProperties: false
+    IncludeOverriddenStorage:
+      type: boolean
+      example: true
+      description: |-
+        If `false` then if a file's parent folder has overridden storage settings, the file won't be included in the result.
+
+        If you don't use folders with custom storage settings (like AWS S3 buckets), you don't need to worry about this setting.
+
+        Default: true
+    IncludePhysicalFolders:
+      type: boolean
+      example: true
+      description: |-
+        If `true` then folders automatically created by file upload operations will be included.
+
+        This field is automatically set to `false` when `recursive=true`.
+
+        Default: true
+    IncludeVirtualFolders:
+      type: boolean
+      example: true
+      description: |-
+        If `true` then folders explicitly created using PutFolder will be included.
+
+        Default: true
+    IterateFolderRecursively:
+      type: boolean
+      description: |-
+        If `true` then iterates sub-folders recursively.
+
+        Default: false
+    ListFolderDryRun:
+      type: boolean
+      description: |-
+        This parameter allows you to simulate a CopyFolder or DeleteFolder operation without performing the operation.
+
+        When set to `true` this operation will return the same set of items that would be operated on by the CopyFolder and DeleteFolder operations, assuming you provide the same `folderPath` and filter parameters to this operation as you do to the CopyFolder and DeleteFolder operations.
+
+        Default: false
+    AccountJobId:
+      type: string
+      example: 01ARZ3NDEKTSV4RRFFQ69G5FAV
+      description: Job ID.
+      minLength: 26
+      maxLength: 26
+      pattern: ^[0-9A-Z]+$
+    AccountJobType:
+      description: Job type.
+      type: string
+      nullable: false
+      enum:
+        - ProcessImageJob
+        - ProcessVideoJob
+        - ProcessAudioJob
+        - AntivirusJob
+        - DeleteFolderBatchJob
+        - DeleteFileBatchJob
+        - CopyFolderBatchJob
+        - CopyFileBatchJob
+    JobUrl:
+      type: string
+      example: https://api.bytescale.com/v2/accounts/FW25aki/jobs/ExampleJob/01ARZ3NDEKTSV4RRFFQ69G5FAV
+      description: |-
+        URL for the job's status.
+
+        You can `GET` this URL to retrieve the job's status.
+
+        You must authorize your `GET` request with a ```secret_*``` API key when accessing the URL.
+      minLength: 1
+      maxLength: 255
+      pattern: ^https?:\/\/[-a-zA-Z0-9]+(?:\.[-a-zA-Z0-9]+)+(/.*)?$
+    AsyncResponse:
+      description: Response body from an API endpoint that performs work asynchronously (i.e. does not complete the work immediately).
+      properties:
+        jobDocs:
+          type: string
+          enum:
+            - https://www.bytescale.com/docs/job-api/GetJob
+          nullable: false
+          description: Link to the documentation that describes how to get a job's status from its job ID.
+        jobId:
+          $ref: '#/components/schemas/AccountJobId'
+          description: Unique ID for the job.
+        jobType:
+          $ref: '#/components/schemas/AccountJobType'
+          description: Type of the job.
+          example: ExampleJob
+        jobUrl:
+          $ref: '#/components/schemas/JobUrl'
+      required:
+        - jobDocs
+        - jobId
+        - jobType
+        - jobUrl
+      type: object
+      additionalProperties: false
+    CopyFolderRequest:
+      description: Request body for CopyFolder.
+      properties:
+        copyFiles:
+          type: boolean
+          description: |-
+            If `true` then copies files.
+
+            Default: true
+          example: true
+        copyOverriddenStorage:
+          type: boolean
+          description: |-
+
+            If `false` then if a file's parent folder has overridden storage settings, the file won't be copied.
+
+            If you don't use folders with custom storage settings (like AWS S3 buckets), you don't need to worry about this setting.
+
+            Conditional: `copyVirtualFolders` and `copyOverriddenStorage` cannot both be `true`.
+
+            Default: false
+          example: false
+        copyVirtualFolders:
+          type: boolean
+          description: |-
+            If `true` then copies virtual folder settings at the current path and below, else only files will be copied.
+
+            Virtual folders are folders that have been created using the PutFolder operation.
+
+            Conditional: `copyVirtualFolders` and `copyOverriddenStorage` cannot both be `true`.
+
+            Default: true
+          example: true
+        destination:
+          $ref: '#/components/schemas/FolderPath'
+          description: |-
+            Destination folder for the copy operation.
+
+            The `source` folder will be copied to this location (rather than under it).
+          example: /destination/folder
+        recursive:
+          type: boolean
+          description: |-
+            If `true` then copies files and virtual folders that are descendants of the `source` folder.
+
+            If `false` then only copies files that are direct children of the `source` folder, and does not copy descendant virtual folders (children or otherwise).
+
+            Default: true
+          example: true
+        source:
+          $ref: '#/components/schemas/FolderPath'
+          description: Source folder for the copy operation.
+          example: /source/folder
+      required:
+        - destination
+        - source
+      type: object
+      additionalProperties: false
+    CopyFolderBatchRequest:
+      description: Request body for CopyFolderBatch.
+      properties:
+        folders:
+          items:
+            $ref: '#/components/schemas/CopyFolderRequest'
+          type: array
+          description: Folders to copy.
+          minItems: 1
+          maxItems: 100
+      required:
+        - folders
+      type: object
+      additionalProperties: false
+    DeleteFolderRequest:
+      description: |-
+        Request body for DeleteFolder.
+
+        You can use ListFolder to preview the operation using the `dryRun` parameter.
+
+        *When deleting a folder with external storage:* if the folder at `folderPath` has overridden storage settings (like an AWS S3 bucket), no files will be deleted, regardless of the parameters you pass. Only the mapping will be removed. If the folder at `folderPath` has inherited storage settings but includes subfolders with overridden storage settings, files in those subfolders won't be deleted, regardless of the parameters you pass. In summary, files in folders with overridden storage are never deleted, unless you directly delete a subfolder of such a folder.
+      properties:
+        deleteFiles:
+          type: boolean
+          description: |-
+            If `true` then deletes files.
+
+            Default: true
+          example: true
+        deleteVirtualFolders:
+          type: boolean
+          description: |-
+            If `true` then deletes folder settings.
+
+            Default: true
+          example: true
+        folderPath:
+          $ref: '#/components/schemas/FolderPath'
+          description: The folder to delete.
+        recursive:
+          type: boolean
+          description: |-
+            If `true` then deletes files and folder settings that descend `folderPath`.
+
+            If `false` then only deletes files that are direct children of `folderPath` and only deletes the folder settings of the current folder (if any). Does not delete the folder settings of any child or descendant folders.
+
+            Default: true
+          example: true
+      required:
+        - folderPath
+      type: object
+      additionalProperties: false
+    DeleteFolderBatchRequest:
+      description: Request body for DeleteFolderBatch.
+      properties:
+        folders:
+          items:
+            $ref: '#/components/schemas/DeleteFolderRequest'
+          type: array
+          description: Folders to delete.
+          minItems: 1
+          maxItems: 1000
+      required:
+        - folders
+      type: object
+      additionalProperties: false
+    AccountJobStatus:
+      type: string
+      enum:
+        - Created
+        - Pending
+        - Running
+        - Rollback
+        - Failed
+        - Succeeded
+        - Cancelling
+        - Cancelled
+    JobSummary:
+      description: Summary information about an asynchronous background job (for example, a folder deletion).
+      properties:
+        jobDocs:
+          type: string
+          enum:
+            - https://www.bytescale.com/docs/job-api/GetJob
+          nullable: false
+          description: Link to the documentation that describes how to get a job's status from its job ID.
+        jobId:
+          $ref: '#/components/schemas/AccountJobId'
+          description: Unique ID for the job.
+        jobType:
+          $ref: '#/components/schemas/AccountJobType'
+          description: Type of the job.
+          example: ExampleJob
+        jobUrl:
+          $ref: '#/components/schemas/JobUrl'
+        accountId:
+          $ref: '#/components/schemas/AccountId'
+        created:
+          $ref: '#/components/schemas/EpochMillis'
+          description: The time this job was created in epoch milliseconds (since midnight 1 January 1970, UTC).
+        error:
+          properties:
+            message:
+              type: string
+              description: Human-readable error message.
+              example: Error message.
+              minLength: 1
+            details:
+              description: Additional machine-readable details relating to the error.
+            code:
+              type: string
+              description: Machine-readable error code.
+              example: error_code
+              minLength: 1
+              maxLength: 255
+              pattern: ^[a-z0-9_]+$
+          required:
+            - message
+            - code
+          type: object
+          nullable: true
+        lastUpdated:
+          $ref: '#/components/schemas/EpochMillis'
+          description: The time this job was updated in epoch milliseconds (since midnight 1 January 1970, UTC).
+        status:
+          $ref: '#/components/schemas/AccountJobStatus'
+          description: The job's status.
+        summary:
+          $ref: '#/components/schemas/JsonObject'
+          description: The `summary` and `jobType` together define the work the job will perform / has performed.
+          example:
+            deletions:
+              - /file/to/delete.jpg
+      required:
+        - jobDocs
+        - jobId
+        - jobType
+        - jobUrl
+        - accountId
+        - created
+        - error
+        - lastUpdated
+        - status
+        - summary
+      type: object
+      additionalProperties: false
+    ListRecentJobsResponse:
+      description: Response body for ListRecentJobs.
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/JobSummary'
+          type: array
+      required:
+        - items
+      type: object
+      additionalProperties: false
+    FilePathText:
+      type: string
+      example: /uploads/file.txt
+      description: Absolute path to a file. Begins with a `/`.
+      minLength: 1
+      maxLength: 512
+      pattern: ^/.*$
+    RawFileUrlText:
+      type: string
+      example: https://upcdn.io/A623uY2/raw/uploads/file.txt
+      description: URL for a raw file hosted on the Bytescale CDN.
+      minLength: 1
+      maxLength: 255
+      pattern: ^https?:\/\/[-a-zA-Z0-9]+(?:\.[-a-zA-Z0-9]+)+(/.*)?$
+    BasicUploadResponse:
+      description: Response body for BasicUpload.
+      properties:
+        accountId:
+          $ref: '#/components/schemas/AccountId'
+        filePath:
+          $ref: '#/components/schemas/FilePathText'
+          description: |-
+            The file's path.
+
+            *We recommend you save this value to your database* (instead of the file's URL).
+
+            This value always begins with a `/`.
+        fileUrl:
+          $ref: '#/components/schemas/RawFileUrlText'
+          description: The file's raw URL (i.e. with no file transformations applied).
+      required:
+        - accountId
+        - filePath
+        - fileUrl
+      type: object
+      additionalProperties: false
+    FileMetadata:
+      description: The file metadata specified in the original upload request as a JSON object.
+      properties: {}
+      type: object
+      additionalProperties: {}
+      example:
+        myCustomField1: true
+        myCustomField2:
+          hello: world
+        anotherCustomField: 42
+    RelativeOrAbsoluteFilePath:
+      type: string
+      example: /uploads/image.jpg
+      description: |-
+        Absolute or relative path to a location in your Bytescale account's storage.
+
+        Relative paths are relative to the API key's default folder (configured per API key in the Bytescale Dashboard).
+
+        Does not support path traversals (e.g. `..`).
+
+        Does not support path variables.
+      minLength: 0
+      maxLength: 512
+      pattern: ^.*$
+    FileNameVariablesEnabled:
+      type: boolean
+      example: true
+      description: |-
+        If `true` then path variables like `{UTC_DATE}` in the `fileName` will be replaced. You can escape `{` characters with a `\`.
+
+        If `false` then path variables like `{UTC_DATE}` in the `fileName` will be taken literally.
+
+        Default: true
+    RelativeOrAbsoluteFolderPath:
+      type: string
+      example: /uploads
+      description: |-
+        Absolute or relative path to a folder in your Bytescale account's storage.
+
+        Relative paths are relative to the API key's default folder (configured per API key in the Bytescale Dashboard).
+
+        Should not end with `/`.
+
+        Does not support path traversals (e.g. `..`).
+
+        Supports path variables.
+      minLength: 0
+      maxLength: 512
+      pattern: ^.*$
+    FolderPathVariablesEnabled:
+      type: boolean
+      example: true
+      description: |-
+        If `true` then path variables like `{UTC_DATE}` in the `folderPath` will be replaced. You can escape `{` characters with a `\`.
+
+        If `false` then path variables like `{UTC_DATE}` in the `folderPath` will be taken literally.
+
+        Default: true
+    DynamicFilePath:
+      description: |-
+        An object containing a `fileName` and/or `folderPath` field.
+
+        The `folderPath` may be relative or absolute; paths are relative to the API key's default folder (configured per API key in the Bytescale Dashboard).
+
+        If a field is omitted, the API key's default values will be used for that field. These are configured per API key via the Bytescale Dashboard.
+
+        Supports path variables.
+      properties:
+        fileName:
+          $ref: '#/components/schemas/FileName'
+        fileNameFallback:
+          $ref: '#/components/schemas/FileName'
+          description: Fallback file name if the `fileName` is already taken.
+        fileNameVariablesEnabled:
+          $ref: '#/components/schemas/FileNameVariablesEnabled'
+        folderPath:
+          $ref: '#/components/schemas/RelativeOrAbsoluteFolderPath'
+        folderPathVariablesEnabled:
+          $ref: '#/components/schemas/FolderPathVariablesEnabled'
+      type: object
+      additionalProperties: false
+    FilePathDefinition:
+      oneOf:
+        - $ref: '#/components/schemas/RelativeOrAbsoluteFilePath'
+        - $ref: '#/components/schemas/DynamicFilePath'
+      description: The path to upload the file to.
+    HttpUrlToUpload:
+      type: string
+      example: https://assets.bytescale.com/example.jpg
+      description: Source URL to upload.
+      minLength: 1
+      maxLength: 1024
+      pattern: ^https?:\/\/[-a-zA-Z0-9]+(?:\.[-a-zA-Z0-9]+)+(/.*)?$
+    UploadFromUrlRequest:
+      description: Request body for UploadFromUrl.
+      properties:
+        metadata:
+          $ref: '#/components/schemas/FileMetadata'
+          description: |-
+            Arbitrary JSON to store against the file as metadata.
+
+            You can retrieve this later via a GetFileDetails request.
+        mime:
+          $ref: '#/components/schemas/MimeType'
+          description: |-
+            The file's MIME type.
+
+            If unset, the MIME type of the `url` will be used.
+          example: text/plain
+        originalFileName:
+          $ref: '#/components/schemas/OriginalFileName'
+          description: |-
+            The file's original name on the user's device.
+
+            If unset, the content disposition of the `url` will be used, if any.
+          example: example.txt
+        path:
+          $ref: '#/components/schemas/FilePathDefinition'
+          description: The path to upload the file to.
+        tags:
+          items:
+            $ref: '#/components/schemas/FileTagName'
+          type: array
+          description: |-
+            The file tags to store against the file.
+
+            When you associate file tags with a file, Bytescale checks which rules match the tags (if any) and applies those rules to the upload request:
+
+            Rules can include max file size checks, traffic limit checks, rate limit checks, and so forth. These are configured in the Bytescale Dashboard.
+        url:
+          $ref: '#/components/schemas/HttpUrlToUpload'
+      required:
+        - url
+      type: object
+      additionalProperties: false
+      example:
+        url: https://assets.bytescale.com/example.jpg
+    FileDetails:
+      description: Contains full information about a file, including its file metadata, file tags, original file name, and MIME type.
+      properties:
+        accountId:
+          $ref: '#/components/schemas/AccountId'
+        metadata:
+          $ref: '#/components/schemas/FileMetadata'
+        mime:
+          $ref: '#/components/schemas/MimeType'
+        originalFileName:
+          allOf:
+            - $ref: '#/components/schemas/OriginalFileName'
+          nullable: true
+        tags:
+          items:
+            $ref: '#/components/schemas/FileTagName'
+          type: array
+        filePath:
+          $ref: '#/components/schemas/FilePath'
+          description: |-
+            The file's path.
+
+            *We recommend you save this value to your database* (instead of the file's URL).
+
+            This value always begins with a `/`.
+        fileUrl:
+          $ref: '#/components/schemas/RawFileUrl'
+          description: The file's raw URL (i.e. with no file transformations applied).
+        lastModified:
+          $ref: '#/components/schemas/EpochMillis'
+          description: Time the file was uploaded or last overwritten. Epoch milliseconds (since midnight 1 January 1970, UTC).
+        size:
+          $ref: '#/components/schemas/SizeInBytes'
+          description: The size of the file in bytes.
+      required:
+        - accountId
+        - metadata
+        - mime
+        - originalFileName
+        - tags
+        - filePath
+        - fileUrl
+        - lastModified
+        - size
+      type: object
+      additionalProperties: false
+    UploadId:
+      type: string
+      example: Kd759aLFxttm69kZ
+      description: The ID for the multipart file upload.
+      minLength: 16
+      maxLength: 16
+      pattern: ^[1-9A-HJ-NP-Za-km-z]*$
+    UploadPart:
+      description: |-
+        Represents a part of a file to be uploaded as part of a multipart file upload.
+
+        Specifies the 'range' of the file that needs uploading, together with an 'uploadUrl' of where to PUT those bytes to.
+
+        The PUT request to the `uploadUrl` will return an etag response header, which must be provided in a subsequent CompleteUploadPart request.
+
+        See: basic file uploads, multipart file uploads.
+      properties:
+        range:
+          $ref: '#/components/schemas/UploadPartRange'
+        uploadId:
+          $ref: '#/components/schemas/UploadId'
+        uploadPartIndex:
+          $ref: '#/components/schemas/UploadPartIndex'
+        uploadUrl:
+          $ref: '#/components/schemas/PreSignedUploadUrl'
+      required:
+        - range
+        - uploadId
+        - uploadPartIndex
+        - uploadUrl
+      type: object
+      additionalProperties: false
+    BeginMultipartUploadResponse:
+      description: Response body for BeginMultipartUpload.
+      properties:
+        file:
+          $ref: '#/components/schemas/FileDetails'
+          description: Details of the file being uploaded, including its file metadata, file tags, original file name, and MIME type.
+        uploadId:
+          $ref: '#/components/schemas/UploadId'
+          description: A unique ID for the multipart file upload session created as a result of this request.
+        uploadParts:
+          properties:
+            first:
+              $ref: '#/components/schemas/UploadPart'
+              description: Represents the first part of a file to be uploaded as part of the multipart file upload.
+            count:
+              $ref: '#/components/schemas/FilePartCount'
+          required:
+            - first
+            - count
+          type: object
+      required:
+        - file
+        - uploadId
+        - uploadParts
+      type: object
+      additionalProperties: false
+    MultipartUploadProtocol:
+      type: string
+      enum:
+        - '1.0'
+        - '1.1'
+      example: '1.1'
+      description: |-
+        Multipart file upload protocol version.
+
+        - `1.0`: this protocol version automatically downgrades to single part uploads when files are below a certain size. When this protocol is used for small files, the file exists immediately after the `PUT` request to the `uploadUrl` completes. This protocol requires more client-side code to implement, and has a known issue whereby file TTLs are ignored if the client code fails to call CompleteUploadPart.
+
+        - `1.1`: this protocol version uses multipart uploads for all files. When this protocol is used, files only exist after the last CompleteUploadPart request is made. This protocol simplifies client code, and fixes a known issue in the `2.0` protocol for file TTLs (described above).
+    BeginMultipartUploadRequest:
+      description: Request body for BeginMultipartUpload.
+      properties:
+        metadata:
+          $ref: '#/components/schemas/FileMetadata'
+          description: |-
+            Arbitrary JSON to store against the file as metadata.
+
+            You can retrieve this later via a GetFileDetails request.
+        mime:
+          $ref: '#/components/schemas/MimeType'
+          description: The file's MIME type.
+          example: text/plain
+        originalFileName:
+          $ref: '#/components/schemas/OriginalFileName'
+          description: The file's original name on the user's device.
+          example: example.txt
+        path:
+          $ref: '#/components/schemas/FilePathDefinition'
+          description: The path to upload the file to.
+          example:
+            fileName: example-{UNIQUE_DIGITS_4}{ORIGINAL_FILE_EXT}
+            folderPath: /uploads
+        protocol:
+          $ref: '#/components/schemas/MultipartUploadProtocol'
+          description: |-
+            Multipart upload protocol version to use.
+
+            The latest Bytescale SDKs use the latest supported version.
+
+            Recommended: "1.1"
+
+            Default: "1.0"
+        size:
+          $ref: '#/components/schemas/SizeInBytes'
+          description: The size of the file in bytes.
+        tags:
+          items:
+            $ref: '#/components/schemas/FileTagName'
+          type: array
+          description: |-
+            The file tags to store against the file.
+
+            When you associate file tags with a file, Bytescale checks which rules match the tags (if any) and applies those rules to the upload request:
+
+            Rules can include max file size checks, traffic limit checks, rate limit checks, and so forth. These are configured in the Bytescale Dashboard.
+      required:
+        - size
+      type: object
+      additionalProperties: false
+    FileCopyStatus:
+      type: string
+      enum:
+        - Copied
+        - FileNotFound
+        - SkippedDueToCondition
+      description: The result of the CopyFile operation.
+    CopyFileResponse:
+      description: Response body for CopyFile.
+      properties:
+        status:
+          $ref: '#/components/schemas/FileCopyStatus'
+      required:
+        - status
+      type: object
+      additionalProperties: false
+    CopyFileRequest:
+      description: Request body for CopyFile.
+      properties:
+        destination:
+          $ref: '#/components/schemas/FilePath'
+          description: Destination file path.
+          example: /destination/file.txt
+        source:
+          $ref: '#/components/schemas/FilePath'
+          description: Source file path.
+          example: /source/file.txt
+      required:
+        - destination
+        - source
+      type: object
+      additionalProperties: false
+    CopyFileBatchRequest:
+      description: Request body for CopyFileBatch.
+      properties:
+        files:
+          items:
+            $ref: '#/components/schemas/CopyFileRequest'
+          type: array
+          description: Files to copy.
+          minItems: 1
+          maxItems: 100
+      required:
+        - files
+      type: object
+      additionalProperties: false
+    DeleteFileBatchRequest:
+      description: Request body for DeleteFileBatch.
+      properties:
+        files:
+          items:
+            $ref: '#/components/schemas/FilePath'
+          type: array
+          minItems: 1
+          maxItems: 1000
+      required:
+        - files
+      type: object
+      additionalProperties: false
+    TransformationParamValue:
+      oneOf:
+        - type: string
+        - type: number
+          format: double
+        - type: boolean
+      description: |-
+        A single transformation parameter provided to a Bytescale File Processing API.
+
+        See TransformationParams for more information.
+    TransformationParamsGroup:
+      description: |-
+        A single group of transformation parameters provided to a Bytescale File Processing API.
+
+        See TransformationParams for more information.
+      properties: {}
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/TransformationParamValue'
+    TransformationParams:
+      oneOf:
+        - $ref: '#/components/schemas/TransformationParamsGroup'
+        - items:
+            $ref: '#/components/schemas/TransformationParamsGroup'
+          type: array
+      description: |-
+        Transformation parameters provided to a Bytescale File Processing API.
+
+        *Array support:*
+
+        Arrays are specified by repeating the same parameter name multiple times on the querystring.
+
+        For example, the following querystring declares a `file` parameter as an array containing two values (`/file1.txt` and `/file2.txt`):
+
+        ```?file=/file1.txt&file=/file2.txt```
+
+        The Bytescale SDKs and the ProcessFileAndSave request body (the `extendedParams` field) also support arrays of transformation parameters. These are specified by providing an array of objects as the field value instead of an object, for example:
+
+        ```transformationParams: [{ file: "/file1.txt" }, { file: "/file2.txt" }]```
+
+        This structure allows parameter groups to be retained, which is important for certain transformations. For example, the Video Processing API allows developers to specify multiple clusters of `w`, `h` and `q` parameters when specifying the Adaptive Bitrate (ABR) variants in an HTTP Live Streaming (HLS) output video.
+
+        *Parameters are order sensitive:*
+
+        The order of the parameters may be important. Please refer to the documentation of each File Processing API for more information.
+
+        *Maximum URL length:*
+
+        Bytescale URLs have a maximum total length of 1000 bytes (excluding the hostname and protocol).
+
+        To provide a longer parameter list to a Bytescale File Processing API, you must use ProcessFileAndSave (POST) instead of ProcessFile (GET). This allows you to specify parameters via the ProcessFileAndSave HTTP request body (via the `extendedParams` field).
+
+        The `extendedParams` field supports up to 400KB of transformation parameter data.
+    CopyableFileData_FileMetadata_:
+      properties:
+        merge:
+          type: boolean
+          description: |-
+            If `true` then merges `value` with the original file's existing data, else uses `value` as-is.
+
+            Default: false
+        setForAllArtifacts:
+          type: boolean
+          description: |-
+            If `true` then sets the `value` for all files generated by the transformation, else only sets the `value` for the root output file.
+
+            Default: true
+        value:
+          $ref: '#/components/schemas/FileMetadata'
+          description: |-
+            The value to set or merge into the field.
+
+            Default: empty object / empty array
+      type: object
+      additionalProperties: false
+    ProcessedFileMetadata:
+      $ref: '#/components/schemas/CopyableFileData_FileMetadata_'
+      description: |-
+        Arbitrary JSON to store against the processed file(s) as metadata.
+
+        You can retrieve this later via a GetFileDetails request.
+    CopyableFileData_FileTagName-Array_:
+      properties:
+        merge:
+          type: boolean
+          description: |-
+            If `true` then merges `value` with the original file's existing data, else uses `value` as-is.
+
+            Default: false
+        setForAllArtifacts:
+          type: boolean
+          description: |-
+            If `true` then sets the `value` for all files generated by the transformation, else only sets the `value` for the root output file.
+
+            Default: true
+        value:
+          items:
+            $ref: '#/components/schemas/FileTagName'
+          type: array
+          description: |-
+            The value to set or merge into the field.
+
+            Default: empty object / empty array
+      type: object
+      additionalProperties: false
+    ProcessedFileTags:
+      $ref: '#/components/schemas/CopyableFileData_FileTagName-Array_'
+      description: |-
+        File tags to store against the processed file(s).
+
+        When you associate file tags with a file, Bytescale checks which rules match the tags (if any) and applies those rules to the upload request:
+
+        Rules can include max file size checks, traffic limit checks, rate limit checks, and so forth. These are configured in the Bytescale Dashboard.
+    ProcessFileAndSaveRequest:
+      description: Request body for ProcessFileAndSave.
+      properties:
+        destination:
+          $ref: '#/components/schemas/FilePathDefinition'
+          description: |-
+            The path to save the processed file(s) to.
+
+            See also: Path Variables
+        extendedParams:
+          $ref: '#/components/schemas/TransformationParams'
+          description: |-
+            The `extendedParams` field allows developers to specify File Processing API parameters up to a size of 400KB. This contrasts with the use of querystring parameters (i.e. the `transformationParams` field in the Bytescale SDKs) in several ways:
+
+            - Bytescale URLs are limited to a total length of 1000 bytes, which restricts the amount of data that can be sent via querystring.
+
+            - The `extendedParams` field has a significantly larger capacity, accommodating up to 400KB of data.
+
+            - When both `extendedParams` and querystring parameters are used together, they are combined. Querystring parameters are parsed first, followed by `extendedParams`.
+
+            - The ProcessFile operation only supports querystring parameters. In contrast, ProcessFileAndSave is compatible with both querystring parameters and the `extendedParams` field.
+        metadata:
+          $ref: '#/components/schemas/ProcessedFileMetadata'
+        tags:
+          $ref: '#/components/schemas/ProcessedFileTags'
+      type: object
+      additionalProperties: false
+      example:
+        destination: /destination/image.jpg
+    ProcessFileAndSaveResponseAsync:
+      description: Response body for ProcessFileAndSave operations where the File Processing API operation is asynchronous (e.g. a video transcoding job).
+      properties:
+        jobDocs:
+          type: string
+          enum:
+            - https://www.bytescale.com/docs/job-api/GetJob
+          nullable: false
+          description: Link to the documentation that describes how to get a job's status from its job ID.
+        jobId:
+          $ref: '#/components/schemas/AccountJobId'
+          description: Unique ID for the job.
+        jobType:
+          $ref: '#/components/schemas/AccountJobType'
+          description: Type of the job.
+          example: ExampleJob
+        jobUrl:
+          $ref: '#/components/schemas/JobUrl'
+        accountId:
+          $ref: '#/components/schemas/AccountId'
+        created:
+          $ref: '#/components/schemas/EpochMillis'
+          description: The time this job was created in epoch milliseconds (since midnight 1 January 1970, UTC).
+        error:
+          properties:
+            message:
+              type: string
+              description: Human-readable error message.
+              example: Error message.
+              minLength: 1
+            details:
+              description: Additional machine-readable details relating to the error.
+            code:
+              type: string
+              description: Machine-readable error code.
+              example: error_code
+              minLength: 1
+              maxLength: 255
+              pattern: ^[a-z0-9_]+$
+          required:
+            - message
+            - code
+          type: object
+          nullable: true
+        lastUpdated:
+          $ref: '#/components/schemas/EpochMillis'
+          description: The time this job was updated in epoch milliseconds (since midnight 1 January 1970, UTC).
+        status:
+          $ref: '#/components/schemas/AccountJobStatus'
+          description: The job's status.
+        summary:
+          $ref: '#/components/schemas/JsonObject'
+          description: The `summary` and `jobType` together define the work the job will perform / has performed.
+          example:
+            deletions:
+              - /file/to/delete.jpg
+        async:
+          type: boolean
+          enum:
+            - true
+          nullable: false
+          description: |-
+            True for asynchronous file processing operations (e.g. video transcoding).
+
+            For asynchronous operations, the response body will contain information about the background job that's processing the file, which can then be polled via the GetJob operation.
+      required:
+        - jobDocs
+        - jobId
+        - jobType
+        - jobUrl
+        - accountId
+        - created
+        - error
+        - lastUpdated
+        - status
+        - summary
+        - async
+      type: object
+      additionalProperties: false
+      example:
+        async: true
+        jobUrl: https://api.bytescale.com/v2/accounts/W142hJk/jobs/ProcessFileJob/01HA255YE6H6DEETJ5M6595ZDA
+        jobDocs: https://www.bytescale.com/docs/job-api/GetJob
+        jobId: 01HA255YE6H6DEETJ5M6595ZDA
+        jobType: ProcessFileJob
+        accountId: W142hJk
+        created: 1694437145030
+        lastUpdated: 1694437145030
+        status: Running
+        summary: {}
+    TransformationSummary:
+      description: |-
+        JSON response returned by certain File Processing APIs.
+
+        Structure varies between File Processing APIs (please see the documentation of each individual File Processing API).
+      properties: {}
+      type: object
+      additionalProperties: {}
+      example:
+        exampleArtifact: /example-artifact.txt
+    ProcessFileAndSaveResponseSync:
+      description: Response body for ProcessFileAndSave operations where the File Processing API operation is synchronous (e.g. an image processing job).
+      properties:
+        accountId:
+          $ref: '#/components/schemas/AccountId'
+        async:
+          type: boolean
+          enum:
+            - false
+          nullable: false
+          description: |-
+            False for synchronous file processing operations (e.g. image processing).
+
+            For synchronous operations, the response body will contain links to the transformed file.
+        filePath:
+          $ref: '#/components/schemas/FilePath'
+          description: |-
+            The `filePath` of the transformed file.
+
+            If the transformation produces multiple artifacts, each artifact will be created as a child of this path.
+          example: /my-processed-image.jpg
+        fileUrl:
+          $ref: '#/components/schemas/HttpUrl'
+          description: |-
+            The `fileUrl` of the transformed file.
+
+            If the transformation produces multiple artifacts, each artifact will be created as a child of this URL.
+
+            We recommend saving the `filePath` to your database instead of the `fileUrl`.
+          example: https://upcdn.io/A623uY2/raw/my-processed-image.jpg
+        summary:
+          $ref: '#/components/schemas/TransformationSummary'
+          description: |-
+            Contains the contents of the file referenced by the `filePath`.
+
+            For some transformations, the `summary` may contain links to other artifacts produced by the transformation. These artifacts can be accessed by appending the artifact's path to the `filePath` and `fileUrl` field values above.
+
+            This field is only present when the `filePath` references a JSON file.
+      required:
+        - accountId
+        - async
+        - filePath
+        - fileUrl
+      type: object
+      additionalProperties: false
+      example:
+        async: false
+        accountId: A623uY2
+        filePath: /my-processed-image.jpg
+        fileUrl: https://upcdn.io/A623uY2/raw/my-processed-image.jpg
+    ProcessFileAndSaveResponse:
+      oneOf:
+        - $ref: '#/components/schemas/ProcessFileAndSaveResponseAsync'
+        - $ref: '#/components/schemas/ProcessFileAndSaveResponseSync'
+      example:
+        async: false
+        accountId: A623uY2
+        filePath: /my-processed-image.jpg
+        fileUrl: https://upcdn.io/A623uY2/raw/my-processed-image.jpg
+      description: Response body for ProcessFileAndSave.
+    TransformationArtifactPath:
+      type: string
+      example: /example/video/part-a.ts
+      description: |-
+        Path to an artifact generated by the transformation.
+
+        All image transformations output the transformed image to the `"/"` artifact. Video transformations may output multiple artifacts.
+
+        Default: "/"
+      pattern: ^/(?:((?!\.*[/\\]).)((?![/\\]\.*[/\\]).)*)?$
+  securitySchemes:
+    authorization-header:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: |-
+        Add *one* of these `Authorization` header values to your request:
+
+        - Option 1: prefix `"Bearer "` to your API key. The result is your `Authorization` header value.
+
+        - Option 2: use `HTTP basic authorization` with `apikey` as your username and your API key as your password.
+
+        For advanced options, please see:
+
+        https://www.bytescale.com/docs/auth
+info:
+  title: '@bytescale/api'
+  version: 2.0.0
+  description: Bytescale API
+  contact:
+    name: 'Bytescale '
+    email: hello@bytescale.com
+    url: https://www.bytescale.com
+openapi: 3.0.0
+paths:
+  /{accountId}/raw{filePath}:
+    get:
+      operationId: DownloadFile
+      tags:
+        - File
+      description: Downloads a file in its original/unprocessed state.
+      servers:
+        - url: https://upcdn.io
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+        - in: query
+          name: cache
+          required: false
+          description: |-
+            Specifies whether to cache the raw file in the Bytescale CDN.
+
+            Default: true
+          schema:
+            type: boolean
+            example: true
+        - in: query
+          name: cache_ttl
+          required: false
+          description: |-
+            Specifies the maximum amount of time, in seconds, the file will be cached on the user's device and in the Bytescale CDN's edge cache.
+
+            Default: Please refer to your account's default cache settings in the Bytescale Dashboard.
+          schema:
+            type: number
+            example: 31536000
+        - in: path
+          name: filePath
+          required: true
+          schema:
+            $ref: '#/components/schemas/FilePath'
+        - in: query
+          name: version
+          required: false
+          description: |-
+            Downloads the latest version of your file (if you have overwritten it) when added to the URL with a unique value.
+
+              The value of the `version` parameter can be anything, e.g. an incremental number, a timestamp, etc.
+
+              You only need to provide and update this value if/when you overwrite your file.
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Success.
+          content:
+            '*':
+              schema:
+                type: string
+                format: binary
+      security:
+        - authorization-header: []
+        - {}
+      summary: Downloads a file in its original/unprocessed state.
+  /{accountId}/{transformation}{filePath}:
+    get:
+      operationId: ProcessFile
+      tags:
+        - File
+      description: Processes a file and returns the result.
+      servers:
+        - url: https://upcdn.io
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+        - in: query
+          name: artifact
+          description: |-
+            Some transformations output multiple files, called artifacts.
+
+            You can download each individual transformation artifact by specifying its path with this parameter
+          required: false
+          schema:
+            $ref: '#/components/schemas/TransformationArtifactPath'
+        - in: query
+          name: cache
+          required: false
+          description: |-
+            Specifies whether to cache the transformed result.
+
+            If set to `false` the transformation will be executed on every request.
+
+            *Recommendation:* instead of disabling the cache, a more performant solution is to use the `version` parameter and to increment it each time you require an updated result.
+
+            Default: true
+          schema:
+            type: boolean
+            example: true
+        - in: query
+          name: cache_only
+          required: false
+          description: |-
+            Only serve transformations from the cache; do not perform new transformations on cache miss.
+
+            If `true`, then if the transformation result does not exist in the cache, a 404 will be returned. No transformations will be performed.
+
+            If `false`, then if the transformation result does not exist in the cache, a new transformation will be performed to produce the result.
+
+            Default: `false`
+          schema:
+            type: boolean
+            example: false
+        - in: query
+          name: cache_perm
+          required: false
+          description: |-
+            Specifies whether to cache the transformed result in the Bytescale CDN perma-cache.
+
+            Perma-caching works by storing your file permanently, or until a manual cache purge is performed.
+
+            When `cache=false` this parameter is automatically set to `false`.
+
+            When `cache_perm=auto` the perma-cache will only be used for files that take more than 1000ms to process.
+
+            When the perma-cache is used, approximately 200ms of latency is added to the initial request. Thereafter, files will be served from the Bytescale CDN's edge cache or perma-cache, so will have minimal latency.
+
+            Default: Please refer to your account's default cache settings in the Bytescale Dashboard.
+          schema:
+            type: string
+            enum:
+              - auto
+              - 'false'
+              - 'true'
+            example: auto
+        - in: query
+          name: cache_ttl
+          required: false
+          description: |-
+            Specifies the maximum amount of time, in seconds, the transformed result will be cached on the user's device and in the Bytescale CDN's edge cache.
+
+            If the file is perma-cached, then the file will not be reprocessed on edge cache misses.
+
+            If the file is not perma-cached, then the file will be reprocessed on edge cache misses.
+
+            For more information on perma-caching, see: `cache_perm`
+
+            Default: Please refer to your account's default cache settings in the Bytescale Dashboard.
+          schema:
+            type: number
+            example: 31536000
+        - in: path
+          name: filePath
+          required: true
+          schema:
+            $ref: '#/components/schemas/FilePath'
+        - in: path
+          name: transformation
+          required: true
+          description: The name of the File Processing API (e.g. `image`, `video`, `audio`) or transformation preset (created in the Bytescale Dashboard) to use when processing the file.
+          schema:
+            $ref: '#/components/schemas/TransformationUrlSlug'
+        - in: query
+          name: transformationParams
+          description: |-
+            Parameters to submit to the File Processing API (e.g. the Image Processing API).
+
+            Please see the documentation for each File Processing API to determine which values can appear here:
+
+            - https://www.bytescale.com/docs/image-processing-api
+            - https://www.bytescale.com/docs/video-processing-api
+            - https://www.bytescale.com/docs/audio-processing-api
+            - https://www.bytescale.com/docs/archive-processing-api
+          required: false
+          schema:
+            $ref: '#/components/schemas/TransformationParams'
+          example:
+            - w: 800
+              h: 600
+              fit: crop
+        - in: query
+          name: version
+          required: false
+          description: |
+            Add this parameter and increment its value to force the file to be reprocessed.
+
+            The Bytescale CDN caches files based on the full URL (including the querystring), meaning this parameter is useful when dealing with changes made to transformation presets. By contrast, File Processing APIs (like the Image Processing API) shouldn't ever require this parameter, since the URL/querystring naturally changes each time you adjust a parameter, causing a cache miss and the file to be reprocessed with the new querystring parameters.
+
+            The value of the `version` parameter can be anything, e.g. an incremental number, a timestamp, etc.
+
+            You only need to provide and update this value if/when you make changes to a transformation preset's settings.
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Success.
+          content:
+            '*':
+              schema:
+                type: string
+                format: binary
+      security:
+        - authorization-header: []
+        - {}
+      summary: Processes a file and returns the result.
+  /{accountId}/save/{transformation}{filePath}:
+    post:
+      operationId: ProcessFileAndSave
+      tags:
+        - File
+      description: Processes a file and saves the result.
+      servers:
+        - url: https://upcdn.io
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+        - in: path
+          name: filePath
+          required: true
+          schema:
+            $ref: '#/components/schemas/FilePath'
+          example: /source/image.jpg
+        - in: path
+          name: transformation
+          required: true
+          description: The name of the File Processing API (e.g. `image`, `video`, `audio`) or transformation preset (created in the Bytescale Dashboard) to use when processing the file.
+          schema:
+            $ref: '#/components/schemas/TransformationUrlSlug'
+        - in: query
+          name: transformationParams
+          description: |-
+            Parameters to submit to the File Processing API (e.g. the Image Processing API).
+
+            Please see the documentation for each File Processing API to determine which values can appear here:
+
+            - https://www.bytescale.com/docs/image-processing-api
+            - https://www.bytescale.com/docs/video-processing-api
+            - https://www.bytescale.com/docs/audio-processing-api
+            - https://www.bytescale.com/docs/archive-processing-api
+          required: false
+          schema:
+            $ref: '#/components/schemas/TransformationParams'
+          example:
+            - w: 800
+              h: 600
+              fit: crop
+      requestBody:
+        description: File output parameters.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProcessFileAndSaveRequest'
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessFileAndSaveResponse'
+      security:
+        - authorization-header: []
+      summary: Processes a file and saves the result.
+  /v2/accounts/{accountId}/folders:
+    put:
+      operationId: PutFolder
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FolderDetails'
+        '401':
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: |-
+        Creates or updates the folder specified by the `folderPath`.
+
+        If the folder's ancestors do not exist, they will be created automatically (with empty FolderSettings).
+
+        Note: you don't need to create folders before uploading files to them.
+
+        Requires a `secret_*` API key. Alternatively, you can use a `public_*` API key and JWT-based auth.
+      tags:
+        - Folder
+      security:
+        - authorization-header: []
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutFolderRequest'
+      summary: |-
+        Creates or updates the folder specified by the `folderPath`.
+
+        If the folder's ancestors do not exist, they will be created automatically (with empty FolderSettings).
+
+        Note: you don't need to create folders before uploading files to them.
+
+        Requires a `secret_*` API key. Alternatively, you can use a `public_*` API key and JWT-based auth.
+    get:
+      operationId: GetFolderDetails
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FolderDetails'
+        '401':
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: |-
+        Gets the full details (e.g. permission, storage layer, etc.) for a folder.
+
+        Returns an empty object if no settings have been configured for this folder.
+
+        Requires a `secret_*` API key. Alternatively, you can use a `public_*` API key and JWT-based auth.
+      tags:
+        - Folder
+      security:
+        - authorization-header: []
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+        - in: query
+          name: folderPath
+          required: true
+          schema:
+            $ref: '#/components/schemas/FolderPath'
+      summary: |-
+        Gets the full details (e.g. permission, storage layer, etc.) for a folder.
+
+        Returns an empty object if no settings have been configured for this folder.
+
+        Requires a `secret_*` API key. Alternatively, you can use a `public_*` API key and JWT-based auth.
+    delete:
+      operationId: DeleteFolder
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncResponse'
+        '401':
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: |-
+        Deletes a folder asynchronously.
+
+        You can use ListFolder to preview the operation using the `dryRun` parameter.
+
+        *When deleting a folder with external storage:* if the folder at `folderPath` has overridden storage settings (like an AWS S3 bucket), no files will be deleted, regardless of the parameters you pass. Only the mapping will be removed. If the folder at `folderPath` has inherited storage settings but includes subfolders with overridden storage settings, files in those subfolders won't be deleted, regardless of the parameters you pass. In summary, files in folders with overridden storage are never deleted, unless you directly delete a subfolder of such a folder.
+
+        Requires a `secret_*` API key. Alternatively, you can use a `public_*` API key and JWT-based auth.
+      tags:
+        - Folder
+      security:
+        - authorization-header: []
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteFolderRequest'
+      summary: |-
+        Deletes a folder asynchronously.
+
+        You can use ListFolder to preview the operation using the `dryRun` parameter.
+
+        *When deleting a folder with external storage:* if the folder at `folderPath` has overridden storage settings (like an AWS S3 bucket), no files will be deleted, regardless of the parameters you pass. Only the mapping will be removed. If the folder at `folderPath` has inherited storage settings but includes subfolders with overridden storage settings, files in those subfolders won't be deleted, regardless of the parameters you pass. In summary, files in folders with overridden storage are never deleted, unless you directly delete a subfolder of such a folder.
+
+        Requires a `secret_*` API key. Alternatively, you can use a `public_*` API key and JWT-based auth.
+  /v2/accounts/{accountId}/folders/list:
+    get:
+      operationId: ListFolder
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListFolderResponse'
+        '401':
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: |-
+        Lists the folder's contents.
+
+        The result may be paginated: subsequent pages can be requested by passing the ```cursor``` from the response into the next request.
+
+        Pagination is complete when the response includes `isPaginationComplete=true`.
+      tags:
+        - Folder
+      security:
+        - authorization-header: []
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+        - in: query
+          name: cursor
+          required: false
+          schema:
+            $ref: '#/components/schemas/ListFolderCursor'
+        - in: query
+          name: dryRun
+          required: false
+          schema:
+            $ref: '#/components/schemas/ListFolderDryRun'
+        - in: query
+          name: folderPath
+          required: true
+          schema:
+            $ref: '#/components/schemas/FolderPath'
+        - in: query
+          name: includeFiles
+          required: false
+          schema:
+            $ref: '#/components/schemas/IncludeFiles'
+        - in: query
+          name: includeOverriddenStorage
+          required: false
+          schema:
+            $ref: '#/components/schemas/IncludeOverriddenStorage'
+        - in: query
+          name: includePhysicalFolders
+          required: false
+          schema:
+            $ref: '#/components/schemas/IncludePhysicalFolders'
+        - in: query
+          name: includeVirtualFolders
+          required: false
+          schema:
+            $ref: '#/components/schemas/IncludeVirtualFolders'
+        - in: query
+          name: limit
+          required: false
+          schema:
+            $ref: '#/components/schemas/ListFolderItemLimit'
+        - in: query
+          name: recursive
+          required: false
+          schema:
+            $ref: '#/components/schemas/IterateFolderRecursively'
+      summary: |-
+        Lists the folder's contents.
+
+        The result may be paginated: subsequent pages can be requested by passing the ```cursor``` from the response into the next request.
+
+        Pagination is complete when the response includes `isPaginationComplete=true`.
+  /v2/accounts/{accountId}/folders/copy:
+    post:
+      operationId: CopyFolder
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncResponse'
+        '401':
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: |-
+        Copies a folder asynchronously.
+
+        You can use ListFolder to preview the operation using the `dryRun` parameter.
+      tags:
+        - Folder
+      security:
+        - authorization-header: []
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CopyFolderRequest'
+      summary: |-
+        Copies a folder asynchronously.
+
+        You can use ListFolder to preview the operation using the `dryRun` parameter.
+  /v2/accounts/{accountId}/folders/copy/batch:
+    post:
+      operationId: CopyFolderBatch
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncResponse'
+        '401':
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: |-
+        Copies multiple folders asynchronously.
+
+        You can use ListFolder to preview the operation using the `dryRun` parameter.
+      tags:
+        - Folder
+      security:
+        - authorization-header: []
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CopyFolderBatchRequest'
+      summary: |-
+        Copies multiple folders asynchronously.
+
+        You can use ListFolder to preview the operation using the `dryRun` parameter.
+  /v2/accounts/{accountId}/folders/batch:
+    delete:
+      operationId: DeleteFolderBatch
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncResponse'
+        '401':
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: |-
+        Deletes multiple folders asynchronously.
+
+        You can use ListFolder to preview the operation using the `dryRun` parameter.
+
+        *When deleting a folder with external storage:* if the folder at `folderPath` has overridden storage settings (like an AWS S3 bucket), no files will be deleted, regardless of the parameters you pass. Only the mapping will be removed. If the folder at `folderPath` has inherited storage settings but includes subfolders with overridden storage settings, files in those subfolders won't be deleted, regardless of the parameters you pass. In summary, files in folders with overridden storage are never deleted, unless you directly delete a subfolder of such a folder.
+
+        Requires a `secret_*` API key. Alternatively, you can use a `public_*` API key and JWT-based auth.
+      tags:
+        - Folder
+      security:
+        - authorization-header: []
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteFolderBatchRequest'
+      summary: |-
+        Deletes multiple folders asynchronously.
+
+        You can use ListFolder to preview the operation using the `dryRun` parameter.
+
+        *When deleting a folder with external storage:* if the folder at `folderPath` has overridden storage settings (like an AWS S3 bucket), no files will be deleted, regardless of the parameters you pass. Only the mapping will be removed. If the folder at `folderPath` has inherited storage settings but includes subfolders with overridden storage settings, files in those subfolders won't be deleted, regardless of the parameters you pass. In summary, files in folders with overridden storage are never deleted, unless you directly delete a subfolder of such a folder.
+
+        Requires a `secret_*` API key. Alternatively, you can use a `public_*` API key and JWT-based auth.
+  /v2/accounts/{accountId}/jobs/{jobType}/{jobId}:
+    get:
+      operationId: GetJob
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobSummary'
+        '401':
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: |-
+        Gets information on a background job.
+
+        Requires a `secret_*` API key.
+      tags:
+        - Job
+      security:
+        - authorization-header: []
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+        - in: path
+          name: jobId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountJobId'
+        - in: path
+          name: jobType
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountJobType'
+      summary: |-
+        Gets information on a background job.
+
+        Requires a `secret_*` API key.
+    delete:
+      operationId: CancelJob
+      responses:
+        '204':
+          description: Success.
+        '401':
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: |-
+        Cancels an in-progress background job.
+
+        Requires a `secret_*` API key.
+      tags:
+        - Job
+      security:
+        - authorization-header: []
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+        - in: path
+          name: jobId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountJobId'
+        - in: path
+          name: jobType
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountJobType'
+      summary: |-
+        Cancels an in-progress background job.
+
+        Requires a `secret_*` API key.
+  /v2/accounts/{accountId}/jobs:
+    get:
+      operationId: ListRecentJobs
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListRecentJobsResponse'
+        '401':
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: |-
+        Lists the most recently issued background jobs.
+
+        Requires a `secret_*` API key.
+      tags:
+        - Job
+      security:
+        - authorization-header: []
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+        - in: query
+          name: jobType
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/AccountJobType'
+      summary: |-
+        Lists the most recently issued background jobs.
+
+        Requires a `secret_*` API key.
+  /v2/accounts/{accountId}/uploads/url:
+    post:
+      operationId: UploadFromUrl
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicUploadResponse'
+        '401':
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: 'Upload from a URL with a single HTTP request:'
+      tags:
+        - Upload
+      security:
+        - authorization-header: []
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+      requestBody:
+        description: File upload parameters.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadFromUrlRequest'
+      summary: 'Upload from a URL with a single HTTP request:'
+  /v2/accounts/{accountId}/uploads:
+    post:
+      operationId: BeginMultipartUpload
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BeginMultipartUploadResponse'
+        '401':
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: Begins a new multipart file upload process.
+      tags:
+        - Upload
+      security:
+        - authorization-header: []
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+      requestBody:
+        description: File upload parameters.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BeginMultipartUploadRequest'
+      summary: Begins a new multipart file upload process.
+  /v2/accounts/{accountId}/uploads/{uploadId}/parts/{uploadPartIndex}:
+    put:
+      operationId: CompleteUploadPart
+      responses:
+        '204':
+          description: Success.
+        '401':
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: File or upload part not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: |-
+        Marks an upload part as uploaded.
+
+        You must call this endpoint after you have successfully issued a `PUT` request to the `uploadUrl` on the corresponding UploadPart.
+      tags:
+        - Upload
+      security:
+        - authorization-header: []
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+        - in: path
+          name: uploadId
+          required: true
+          schema:
+            $ref: '#/components/schemas/UploadId'
+        - in: path
+          name: uploadPartIndex
+          required: true
+          schema:
+            $ref: '#/components/schemas/UploadPartIndex'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompleteUploadPartRequest'
+      summary: |-
+        Marks an upload part as uploaded.
+
+        You must call this endpoint after you have successfully issued a `PUT` request to the `uploadUrl` on the corresponding UploadPart.
+    get:
+      operationId: GetUploadPart
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadPart'
+        '401':
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: File or upload part not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: Gets a remaining upload part for a multipart file upload.
+      tags:
+        - Upload
+      security:
+        - authorization-header: []
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+        - in: path
+          name: uploadId
+          required: true
+          schema:
+            $ref: '#/components/schemas/UploadId'
+        - in: path
+          name: uploadPartIndex
+          required: true
+          schema:
+            $ref: '#/components/schemas/UploadPartIndex'
+      summary: Gets a remaining upload part for a multipart file upload.
+  /v2/accounts/{accountId}/uploads/{uploadId}/parts:
+    get:
+      operationId: ListUploadParts
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadPartList'
+        '401':
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: File not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: |-
+        Lists the remaining upload parts for a multipart file upload.
+
+        An empty array is returned when the upload is complete.
+      tags:
+        - Upload
+      security:
+        - authorization-header: []
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+        - in: path
+          name: uploadId
+          required: true
+          schema:
+            $ref: '#/components/schemas/UploadId'
+      summary: |-
+        Lists the remaining upload parts for a multipart file upload.
+
+        An empty array is returned when the upload is complete.
+  /v2/accounts/{accountId}/files/details:
+    get:
+      operationId: GetFileDetails
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileDetails'
+        '401':
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: Gets the full details (e.g. metadata, tags, etc.) for a file.
+      tags:
+        - File
+      security:
+        - authorization-header: []
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+        - in: query
+          name: filePath
+          required: true
+          schema:
+            $ref: '#/components/schemas/FilePath'
+      summary: Gets the full details (e.g. metadata, tags, etc.) for a file.
+  /v2/accounts/{accountId}/files/copy:
+    post:
+      operationId: CopyFile
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CopyFileResponse'
+        '401':
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: Copies a file synchronously.
+      tags:
+        - File
+      security:
+        - authorization-header: []
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CopyFileRequest'
+      summary: Copies a file synchronously.
+  /v2/accounts/{accountId}/files/copy/batch:
+    post:
+      operationId: CopyFileBatch
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncResponse'
+        '401':
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: Copies multiple files asynchronously.
+      tags:
+        - File
+      security:
+        - authorization-header: []
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CopyFileBatchRequest'
+      summary: Copies multiple files asynchronously.
+  /v2/accounts/{accountId}/files:
+    delete:
+      operationId: DeleteFile
+      responses:
+        '204':
+          description: Success.
+        '401':
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: |-
+        Deletes a file synchronously.
+
+        Requires a `secret_*` API key. Alternatively, you can use a `public_*` API key and JWT-based auth.
+      tags:
+        - File
+      security:
+        - authorization-header: []
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+        - in: query
+          name: filePath
+          required: true
+          schema:
+            $ref: '#/components/schemas/FilePath'
+      summary: |-
+        Deletes a file synchronously.
+
+        Requires a `secret_*` API key. Alternatively, you can use a `public_*` API key and JWT-based auth.
+  /v2/accounts/{accountId}/files/batch:
+    delete:
+      operationId: DeleteFileBatch
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncResponse'
+        '401':
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: |-
+        Deletes multiple files asynchronously.
+
+        Requires a `secret_*` API key. Alternatively, you can use a `public_*` API key and JWT-based auth.
+      tags:
+        - File
+      security:
+        - authorization-header: []
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteFileBatchRequest'
+      summary: |-
+        Deletes multiple files asynchronously.
+
+        Requires a `secret_*` API key. Alternatively, you can use a `public_*` API key and JWT-based auth.
+servers:
+  - url: https://api.bytescale.com
+    description: Bytescale API
+tags:
+  - name: Upload
+    description: Operations for performing file uploads to your Bytescale account.
+    externalDocs:
+      description: See the Bytescale SDK documentation for more information.
+      url: https://www.bytescale.com/docs/sdks
+  - name: File
+    description: Operations for managing files in your Bytescale account.
+    externalDocs:
+      description: See the Bytescale SDK documentation for more information.
+      url: https://www.bytescale.com/docs/sdks
+  - name: Folder
+    description: Operations for managing folders in your Bytescale account.
+    externalDocs:
+      description: See the Bytescale SDK documentation for more information.
+      url: https://www.bytescale.com/docs/sdks
+  - name: Job
+    description: Operations for managing jobs issued by other asynchronous operations (e.g. batch file deletions).
+    externalDocs:
+      description: See the Bytescale SDK documentation for more information.
+      url: https://www.bytescale.com/docs/sdks

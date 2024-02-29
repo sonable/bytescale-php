@@ -1,13 +1,13 @@
-# ProcessFileAndSaveResponseSync
+# # ProcessFileAndSaveResponseSync
 
 ## Properties
 
-| Name           | Type                                                                             | Description                                                                                                                                                         | Notes      |
-| -------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| **account_id** | [**\BytescalePHP\Client\Model\AccountId**](AccountId.md)                         |                                                                                                                                                                     |
-| **async**      | **bool**                                                                         | False for synchronous file processing operations (e.g. image processing). For synchronous operations, the response body will contain links to the transformed file. |
-| **file_path**  | [**\BytescalePHP\Client\Model\FilePath**](FilePath.md)                           |                                                                                                                                                                     |
-| **file_url**   | [**\BytescalePHP\Client\Model\HttpUrl**](HttpUrl.md)                             |                                                                                                                                                                     |
-| **summary**    | [**\BytescalePHP\Client\Model\TransformationSummary**](TransformationSummary.md) |                                                                                                                                                                     | [optional] |
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**accountId** | **string** | Your account ID.  This is visible on the settings page:  https://www.bytescale.com/dashboard/settings |
+**async** | **bool** | False for synchronous file processing operations (e.g. image processing).  For synchronous operations, the response body will contain links to the transformed file. |
+**filePath** | **string** | Absolute path to a file. Begins with a &#x60;/&#x60;. |
+**fileUrl** | **string** | URL for an http(s) resource. |
+**summary** | **array<string,mixed>** | JSON response returned by certain File Processing APIs.  Structure varies between File Processing APIs (please see the documentation of each individual File Processing API). | [optional]
 
-[[Back to Model list]](../../README.md#documentation-for-models) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to README]](../../README.md)
+[[Back to Model list]](../../README.md#models) [[Back to API list]](../../README.md#endpoints) [[Back to README]](../../README.md)

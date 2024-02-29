@@ -1,12 +1,12 @@
-# ListFolderResponse
+# # ListFolderResponse
 
 ## Properties
 
-| Name                       | Type                                                                   | Description                                                                          | Notes |
-| -------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ----- |
-| **cursor**                 | [**\BytescalePHP\Client\Model\FileOrFolderPath**](FileOrFolderPath.md) |                                                                                      |
-| **folder**                 | [**\BytescalePHP\Client\Model\FolderSummary**](FolderSummary.md)       |                                                                                      |
-| **is_pagination_complete** | **bool**                                                               | If &#x60;true&#x60; then paging has completed.                                       |
-| **items**                  | [**\BytescalePHP\Client\Model\ObjectSummary[]**](ObjectSummary.md)     | Summary information about each of the folder&#x27;s descendants (files and folders). |
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**cursor** | **string** | Absolute path to a file or folder. Begins with a &#x60;/&#x60;. |
+**folder** | [**\Bytescale\Model\FolderSummary**](FolderSummary.md) |  |
+**isPaginationComplete** | **bool** | If &#x60;true&#x60; then paging has completed. |
+**items** | [**\Bytescale\Model\ObjectSummary[]**](ObjectSummary.md) | Summary information about each of the folder&#39;s descendants (files and folders). |
 
-[[Back to Model list]](../../README.md#documentation-for-models) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to README]](../../README.md)
+[[Back to Model list]](../../README.md#models) [[Back to API list]](../../README.md#endpoints) [[Back to README]](../../README.md)

@@ -1,9 +1,9 @@
-# CopyFileBatchRequest
+# # CopyFileBatchRequest
 
 ## Properties
 
-| Name      | Type                                                                   | Description    | Notes |
-| --------- | ---------------------------------------------------------------------- | -------------- | ----- |
-| **files** | [**\BytescalePHP\Client\Model\CopyFileRequest[]**](CopyFileRequest.md) | Files to copy. |
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**files** | [**\Bytescale\Model\CopyFileRequest[]**](CopyFileRequest.md) | Files to copy. |
 
-[[Back to Model list]](../../README.md#documentation-for-models) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to README]](../../README.md)
+[[Back to Model list]](../../README.md#models) [[Back to API list]](../../README.md#endpoints) [[Back to README]](../../README.md)
