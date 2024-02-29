@@ -6,7 +6,7 @@ A PHP library for interacting with the [Bytescale](https://www.bytescale.com) AP
 
 See the official JS repository for more examples of what you can do: [https://github.com/bytescale/bytescale-javascript-sdk](https://github.com/bytescale/bytescale-javascript-sdk)
 
-Developed using swagger-codegen v3 and the [Bytescale OpenAPI specification](https://api.bytescale.com/docs/openapi-spec-v3.json).
+Developed using swagger-codegen v3 and the [Bytescale OpenAPI specification](https://api.bytescale.com/docs/openapi-spec-v3.json)
 
 - API version: 2.0.0
 
