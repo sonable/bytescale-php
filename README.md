@@ -64,11 +64,11 @@ composer install
 require_once(__DIR__ . '/vendor/autoload.php');
 
 // Configure API key authorization: authorization-header
-$config = Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-$config = Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-$config = Swagger\Client\Configuration::getDefaultConfiguration()->setHost('https://upcdn.io');
+$config = BytescalePHP\Client\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
+$config = BytescalePHP\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
+$config = BytescalePHP\Client\Configuration::getDefaultConfiguration()->setHost('https://upcdn.io');
 
-$apiInstance = new Swagger\Client\Api\FileApi(
+$apiInstance = new BytescalePHP\Client\Api\FileApi(
     // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
     // This is optional, `GuzzleHttp\Client` will be used as default.
     new GuzzleHttp\Client(),

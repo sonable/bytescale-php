@@ -12,7 +12,7 @@
     "license": "proprietary",
     "authors": [
         {
-            "name": "Swagger and contributors",
+            "name": "BytescalePHP and contributors",
             "homepage": "https://github.com/swagger-api/swagger-codegen"
         }
     ],
@@ -29,9 +29,9 @@
         "friendsofphp/php-cs-fixer": "^3.5"
     },
     "autoload": {
-        "psr-4": { "Swagger\\Client\\" : "lib/" }
+        "psr-4": { "BytescalePHP\\Client\\" : "lib/" }
     },
     "autoload-dev": {
-        "psr-4": { "Swagger\\Client\\" : "test/" }
+        "psr-4": { "BytescalePHP\\Client\\" : "test/" }
     }
 }
