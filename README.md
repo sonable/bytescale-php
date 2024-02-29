@@ -23,11 +23,11 @@ To install the bindings via [Composer](http://getcomposer.org/), add the followi
   "repositories": [
     {
       "type": "git",
-      "url": "https://github.com/sonable/bytescale-php.git"
+      "url": "https://github.com/sonable/bytescale-php-sdk.git"
     }
   ],
   "require": {
-    "sonable/bytescale-php": "*@dev"
+    "sonable/bytescale-php-sdk": "*@dev"
   }
 }
 ```
@@ -49,6 +49,44 @@ To run the unit tests:
 ```
 composer install
 ./vendor/bin/phpunit
+```
+
+## Example Usage
+
+This example is to download a raw, unprocessed file from your Bytescale library.
+
+```php
+<?php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+// Configure API key authorization: authorization-header
+$config = Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
+// Setup prefix (e.g. Bearer) for API key, if needed
+$config = Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
+$config = Swagger\Client\Configuration::getDefaultConfiguration()->setHost('https://upcdn.io');
+
+$apiInstance = new Swagger\Client\Api\FileApi(
+    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
+    // This is optional, `GuzzleHttp\Client` will be used as default.
+    new GuzzleHttp\Client(),
+    $config
+);
+
+$account_id = "kW15bwd"; // string | REPLACE THIS WITH YOUR ACCOUNT ID
+$file_path = "/TestBed/IMG_1866.jpg"; // string | REPLACE THIS WITH A BYTESCALE FILEPATH
+$cache = true; // bool | Specifies whether to cache the raw file in the Bytescale CDN.  Default: true
+$cache_ttl = 1.2; // float | Specifies the maximum amount of time, in seconds, the file will be cached on the user's device and in the Bytescale CDN's edge cache.  Default: Please refer to your account's default cache settings in the Bytescale Dashboard.
+$version = "version_example"; // string | Downloads the latest version of your file (if you have overwritten it) when added to the URL with a unique value.    The value of the `version` parameter can be anything, e.g. an incremental number, a timestamp, etc.    You only need to provide and update this value if/when you overwrite your file.
+
+try {
+    $result = $apiInstance->downloadFile($account_id, $file_path, $cache, $cache_ttl, $version);
+    $localPath = $_SERVER['DOCUMENT_ROOT'] . '/my-downloaded-file.jpg';
+    file_put_contents($localPath, $result) or die("Unable to save file!");
+    print_r('Downloaded: ' . $file_path);
+} catch (Exception $e) {
+    echo 'Exception when calling FileApi->downloadFile: ', $e->getMessage(), PHP_EOL;
+}
+
 ```
 
 ## Getting Started
